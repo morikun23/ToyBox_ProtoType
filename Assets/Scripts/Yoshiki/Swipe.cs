@@ -1,72 +1,90 @@
-﻿using System.Collections;
+﻿//担当者：佐藤由樹
+//概要　：入力判別用スクリプト
+//参考  ：https://gist.github.com/Buravo46/8367810
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Swipe : MonoBehaviour {
 
+    //UI?
     GameObject square;
 
-    Player player;
-
+    //スワイプ用フラグ
     bool swipeFlg = false;
 
+    //タッチ開始位置
     private Vector3 touchStartPos;
+    //タッチ現在位置
     private Vector3 touchNowPos;
 
-    // スクリーン座標をワールド座標に変換した位置座標
-    private Vector3 Position;
+    //判定オブジェクトの位置
+    private Vector3 position;
+
+    //マウス座標
     private Vector3 changeToPos;
 
-    Vector3 Size;
+    //判定オブジェクトのサイズ
+    private　Vector3 size;
 
-    bool MOVE = false;
+    //アクション用フラグ
+    bool move = false;
 
-    // Use this for initialization
+
     void Start()
     {
-        square = gameObject;
-        player = square.GetComponent<Player>();
-        Size = gameObject.transform.localScale;
+        //サイズの取得
+        size = gameObject.transform.localScale;
     }
 
-    // Update is called once per frame
     public void Update()
     {
+        //タッチ、スワイプ位置判断
         Swipes();
     }
 
     void Swipes()
     {
-        Position = gameObject.transform.position;
+        //オブジェクト位置取得
+        position = gameObject.transform.position;
 
 
-        // Vector3でマウス位置座標を取得する
+        // マウス位置座標を取得する
         changeToPos = Input.mousePosition;
         // Z軸修正
         changeToPos.z = 10f;
         // マウス位置座標をスクリーン座標からワールド座標に変換する
         touchNowPos = Camera.main.ScreenToWorldPoint(changeToPos);
 
-
-        if (touchNowPos.x <= Position.x + Size.x  && touchNowPos.x >= Position.x - Size.y &&
-            touchNowPos.y <= Position.y + Size.y  && touchNowPos.y >= Position.y - Size.y )
+        //範囲内にマウスがいるか判定
+        if (touchNowPos.x <= position.x + size.x  && touchNowPos.x >= position.x - size.y &&
+            touchNowPos.y <= position.y + size.y  && touchNowPos.y >= position.y - size.y )
         {
-            if (Input.GetKey(KeyCode.Mouse0))
+            //タッチ
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                touchStartPos = Position;
+                //位置取得
+                touchStartPos = position;
 
-                MOVE = true;
+                move = true;
+
+                //開始
                 Started();
             }
+            //指を離す
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
-                MOVE = false;
+                move = false;
+
                 if (swipeFlg)
                 {
+                    //スワイプ終了
                     SwipeE();
                 }
                 else
                 {
+                    //タッチ終了
                     TouchE();
                 }
                 swipeFlg = false;
@@ -77,48 +95,68 @@ public class Swipe : MonoBehaviour {
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0) && swipeFlg)
         {
-            MOVE = false;
+            move = false;
+
+            //スワイプ終了
             SwipeE();
+
+            //初期化
             swipeFlg = false;
             
         }
 
-
-        if (MOVE)
+        //アクション
+        if (move)
             Move();
+    }
+
+    void Move()
+    {
+        //上下左右判定
+        GetDirection();
+
     }
 
     void GetDirection()
     {
+        //x座標判定用
         float directionX = touchNowPos.x - touchStartPos.x;
+        //y座標判定用
         float directionY = touchNowPos.y - touchStartPos.y;
-        string Direction = "NULL";
+        //判定引数
+        string direction = "NULL";
 
+        //xが長い場合
         if (Mathf.Abs(directionY) < Mathf.Abs(directionX))
         {
+            //右にいる場合
             if (1 < directionX)
             {
-                Direction = "right";
+                direction = "right";
             }
+            //左にいる場合
             else if (-1 > directionX)
             {
-                Direction = "left";
+                direction = "left";
             }
         }
+        //yが長い場合
         else if (Mathf.Abs(directionX) < Mathf.Abs(directionY))
         {
+            //上にいる場合
             if (1 < directionY)
             {
-                Direction = "up";
+                direction = "up";
             }
+            //下にいる場合
             else if (-1 > directionY)
             {
-                Direction = "down";
+                direction = "down";
             }
         }
 
-
-        switch (Direction)
+        //呼び出すものを判別
+        switch (direction)
         {
             case "up":
                 Up();
@@ -144,11 +182,7 @@ public class Swipe : MonoBehaviour {
 
     }
 
-    void Move()
-    {
-        GetDirection();
 
-    }
 
     public virtual void Started()
     {
