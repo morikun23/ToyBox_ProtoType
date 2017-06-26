@@ -32,7 +32,7 @@ public class CrushedObject : MonoBehaviour {
 		if(RayCast (Vector2.up)) m_num_retunValue += 4;
 		if(RayCast (Vector2.down)) m_num_retunValue += 8;
 
-		Debug.Log (m_num_retunValue);
+		//Debug.Log (m_num_retunValue);
 
 		if ((m_num_retunValue & 3) == 3 || (m_num_retunValue & 12) == 12) {
 			m_flg_Crushed = true;

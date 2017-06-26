@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove003 : MonoBehaviour {
+public class PlayerMove : MonoBehaviour {
 	public float spd_move = 3f;
 	public float spd_jump = 3f;
 	private Rigidbody2D com_rigidBody;
@@ -148,7 +148,7 @@ public class PlayerMove003 : MonoBehaviour {
 		float baf_rotation = Mathf.Atan2(baf_mouse.y - transform.position.y,baf_mouse.x - transform.position.x);
 
 		obj_shotChatcher = Instantiate (obj_catcher,transform.position,Quaternion.identity);
-		CatcherController003 scr_catcherController = obj_shotChatcher.GetComponent<CatcherController003>();
+		CatcherController scr_catcherController = obj_shotChatcher.GetComponent<CatcherController>();
 		obj_shotChatcher.transform.eulerAngles = new Vector3 (0,0,baf_rotation * Mathf.Rad2Deg);
 		scr_catcherController.obj_initPos = obj_catcherPos;
 		scr_catcherController.obj_Lead = this.gameObject;
@@ -166,6 +166,9 @@ public class PlayerMove003 : MonoBehaviour {
 		} else {
 			flg_hitGround = false;
 		}
+	}
+
+	void SightControll(){
 	}
 
 }

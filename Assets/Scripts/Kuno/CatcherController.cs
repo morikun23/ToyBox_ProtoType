@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CatcherController003 : MonoBehaviour {
+public class CatcherController : MonoBehaviour {
 
 	//スポーン時に必要な値
 	public GameObject obj_initPos;		//キャッチャーの戻る場所
@@ -110,9 +110,9 @@ public class CatcherController003 : MonoBehaviour {
 
 		if(cnt_live == 0){
 			if (PlayerCheck () != null) {
-				PlayerMove003 baf_playerMove = PlayerCheck ();
+				PlayerMove baf_playerMove = PlayerCheck ();
 				baf_playerMove.flg_shoted = false;
-				baf_playerMove.enu_status = PlayerMove003.Status.Neutoral;
+				baf_playerMove.enu_status = PlayerMove.Status.Neutoral;
 				Destroy (gameObject);
 			}
 		}
@@ -123,8 +123,8 @@ public class CatcherController003 : MonoBehaviour {
 
 		//ひっかけたのがプレーヤーなら、プレーヤーを状態遷移させる
 		if(PlayerCheck() != null){
-			PlayerMove003 spr_playerMove = PlayerCheck ();
-			spr_playerMove.enu_status = PlayerMove003.Status.WireConnected;
+			PlayerMove spr_playerMove = PlayerCheck ();
+			spr_playerMove.enu_status = PlayerMove.Status.WireConnected;
 		}
 
 	}
@@ -146,15 +146,15 @@ public class CatcherController003 : MonoBehaviour {
 
 		if(num_distance < 0){
 			if (PlayerCheck () != null) {
-				PlayerMove003 baf_playerMove = PlayerCheck ();
+				PlayerMove baf_playerMove = PlayerCheck ();
 
 				baf_playerMove.flg_shoted = false;
 				if (scr_pullBlock != null) {
 					scr_pullBlock.AttachParent (obj_Lead, new Vector2 (0, 1));
-					baf_playerMove.enu_status = PlayerMove003.Status.BoxCarry;
+					baf_playerMove.enu_status = PlayerMove.Status.BoxCarry;
 					baf_playerMove.scr_pullBlock = scr_pullBlock;
 				} else {
-					baf_playerMove.enu_status = PlayerMove003.Status.Neutoral;
+					baf_playerMove.enu_status = PlayerMove.Status.Neutoral;
 				}
 
 				Destroy (gameObject);
@@ -167,9 +167,9 @@ public class CatcherController003 : MonoBehaviour {
 	}
 
 	//Obj_Leadに引っかかっているのがプレーヤーかどうか調べる(まあプレーヤーなんだけど)
-	PlayerMove003 PlayerCheck(){
+	PlayerMove PlayerCheck(){
 		if(obj_Lead.gameObject.tag == "Player")
-			return obj_Lead.GetComponent<PlayerMove003>();
+			return obj_Lead.GetComponent<PlayerMove>();
 
 		return null;
 
