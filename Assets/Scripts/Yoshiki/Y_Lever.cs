@@ -8,9 +8,6 @@ using UnityEngine;
 public class Y_Lever : MonoBehaviour
 {
 
-    //UI?
-    GameObject square;
-
     //スワイプ用フラグ
     bool swipeFlg = false;
 
@@ -21,7 +18,6 @@ public class Y_Lever : MonoBehaviour
 
     //判定オブジェクトの位置
     private Vector3 position;
-    private Quaternion rotation;
 
     //マウス座標
     private Vector3 changeToPos;
@@ -35,8 +31,6 @@ public class Y_Lever : MonoBehaviour
 
     //角度用変数
     Vector3 direction;
-    float angleX;
-    float angleY;
     double rad;
 
     void Start()
@@ -54,6 +48,18 @@ public class Y_Lever : MonoBehaviour
 
     void Swipes()
     {
+        //触れている指の数が０以下なら中断
+        if (Input.touchCount < 1) return;
+
+        Touch touchInfo = Input.GetTouch(0);
+
+        //deltapositonは、どれだけ指が動いたかのベクトル
+        if(Mathf.Abs(touchInfo.deltaPosition.x) > 5)
+        {
+            Debug.Log("Swiped");
+            swipeFlg = true;
+        }
+
         //オブジェクト位置取得
         position = gameObject.transform.position;
 
@@ -68,8 +74,7 @@ public class Y_Lever : MonoBehaviour
         //範囲内にマウスがいるか判定
         if (Physics2D.OverlapPoint(touchNowPos))
         {
-            RaycastHit2D hitInfo = Physics2D.Raycast(touchNowPos, -Vector2.up,
-                float.MaxValue, LayerMask.NameToLayer("UI"));
+
             //タッチ
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -97,6 +102,7 @@ public class Y_Lever : MonoBehaviour
                     TouchE();
                 }
                 swipeFlg = false;
+                gameObject.transform.eulerAngles = new Vector3(0, 0, 315);
 
             }
 
@@ -112,6 +118,7 @@ public class Y_Lever : MonoBehaviour
             //初期化
             swipeFlg = false;
 
+            gameObject.transform.eulerAngles = new Vector3(0, 0, 315);
         }
 
         //アクション
@@ -129,27 +136,40 @@ public class Y_Lever : MonoBehaviour
 
     void GetDirection()
     {
+        //座標取得
         direction = touchNowPos - transform.position;
 
+        //角度取得
         rad = Mathf.Atan2(direction.y, direction.x);
 
+        //左移動
         if (rad < 2 && rad > 0.8)
         {
-            if (gameObject.transform.rotation.z < 5 && gameObject.transform.rotation.z > -95)
-            {
-                gameObject.transform.Rotate(new Vector3(0, 0, 5));
-            }
-            Debug.Log("右");
-        }
+            //指の位置がレバーの角度内なら
+            if (gameObject.transform.eulerAngles.z < 360 && gameObject.transform.eulerAngles.z > 270)
+                gameObject.transform.eulerAngles += new Vector3(0, 0, 5);
+            
+            //レバーが境界線をはみ出した場合
+            if (gameObject.transform.eulerAngles.z <= 270 && gameObject.transform.eulerAngles.z > 260)
+                gameObject.transform.eulerAngles = new Vector3(0, 0, 275);
+
+            Debug.Log("左周り");
+
+        }//右移動
         else if (rad < 0.7 && rad > -1)
         {
-            if (gameObject.transform.rotation.z > -90 && gameObject.transform.rotation.z > -5)
-            {
-                gameObject.transform.Rotate(new Vector3(0, 0, -5));
-            }
-            Debug.Log("左");
+            //指の位置がレバーの角度内なら
+            if (gameObject.transform.eulerAngles.z < 360 && gameObject.transform.eulerAngles.z > 270)
+                gameObject.transform.eulerAngles += new Vector3(0, 0, -5);
+
+            //レバーが境界線をはみ出した場合
+            if (gameObject.transform.eulerAngles.z < 10)
+                gameObject.transform.eulerAngles = new Vector3(0, 0, 355);
+
+            Debug.Log("右回り");
+
         }
-        Debug.Log("タッチ");
+        
     }
    
 
