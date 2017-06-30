@@ -1,12 +1,12 @@
 ﻿//担当者：佐藤由樹
 //概要　：入力判別用スクリプト
-//参考  ：https://gist.github.com/Buravo46/8367810
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Swipe : MonoBehaviour {
+public class Y_Lever : MonoBehaviour
+{
 
     //UI?
     GameObject square;
@@ -21,21 +21,29 @@ public class Swipe : MonoBehaviour {
 
     //判定オブジェクトの位置
     private Vector3 position;
+    private Quaternion rotation;
 
     //マウス座標
     private Vector3 changeToPos;
 
     //判定オブジェクトのサイズ
-    private　Vector3 size;
+    private float size;
+    SpriteRenderer spRenderer;
 
     //アクション用フラグ
     bool move = false;
 
+    //角度用変数
+    Vector3 direction;
+    float angleX;
+    float angleY;
+    double rad;
 
     void Start()
     {
         //サイズの取得
-        size = gameObject.transform.localScale;
+        spRenderer = gameObject.GetComponent<SpriteRenderer>();
+        size = spRenderer.bounds.size.y;
     }
 
     public void Update()
@@ -58,9 +66,10 @@ public class Swipe : MonoBehaviour {
         touchNowPos = Camera.main.ScreenToWorldPoint(changeToPos);
 
         //範囲内にマウスがいるか判定
-        if (touchNowPos.x <= position.x + size.x  && touchNowPos.x >= position.x - size.y &&
-            touchNowPos.y <= position.y + size.y  && touchNowPos.y >= position.y - size.y )
+        if (Physics2D.OverlapPoint(touchNowPos))
         {
+            RaycastHit2D hitInfo = Physics2D.Raycast(touchNowPos, -Vector2.up,
+                float.MaxValue, LayerMask.NameToLayer("UI"));
             //タッチ
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -102,7 +111,7 @@ public class Swipe : MonoBehaviour {
 
             //初期化
             swipeFlg = false;
-            
+
         }
 
         //アクション
@@ -112,76 +121,37 @@ public class Swipe : MonoBehaviour {
 
     void Move()
     {
-        //上下左右判定
+        //判定
         GetDirection();
 
     }
 
+
     void GetDirection()
     {
-        //x座標判定用
-        float directionX = touchNowPos.x - touchStartPos.x;
-        //y座標判定用
-        float directionY = touchNowPos.y - touchStartPos.y;
-        //判定引数
-        string direction = "NULL";
+        direction = touchNowPos - transform.position;
 
-        //xが長い場合
-        if (Mathf.Abs(directionY) < Mathf.Abs(directionX))
+        rad = Mathf.Atan2(direction.y, direction.x);
+
+        if (rad < 2 && rad > 0.8)
         {
-            //右にいる場合
-            if (1 < directionX)
+            if (gameObject.transform.rotation.z < 5 && gameObject.transform.rotation.z > -95)
             {
-                direction = "right";
+                gameObject.transform.Rotate(new Vector3(0, 0, 5));
             }
-            //左にいる場合
-            else if (-1 > directionX)
-            {
-                direction = "left";
-            }
+            Debug.Log("右");
         }
-        //yが長い場合
-        else if (Mathf.Abs(directionX) < Mathf.Abs(directionY))
+        else if (rad < 0.7 && rad > -1)
         {
-            //上にいる場合
-            if (1 < directionY)
+            if (gameObject.transform.rotation.z > -90 && gameObject.transform.rotation.z > -5)
             {
-                direction = "up";
+                gameObject.transform.Rotate(new Vector3(0, 0, -5));
             }
-            //下にいる場合
-            else if (-1 > directionY)
-            {
-                direction = "down";
-            }
+            Debug.Log("左");
         }
-
-        //呼び出すものを判別
-        switch (direction)
-        {
-            case "up":
-                Up();
-                swipeFlg = true;
-                break;
-
-            case "down":
-                Down();
-                swipeFlg = true;
-                break;
-
-            case "right":
-                Right();
-                swipeFlg = true;
-                break;
-
-            case "left":
-                Left();
-                swipeFlg = true;
-                break;
-
-        }
-
+        Debug.Log("タッチ");
     }
-
+   
 
 
     public virtual void Started()
@@ -214,3 +184,5 @@ public class Swipe : MonoBehaviour {
 
     }
 }
+
+

@@ -6,7 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Swipe {
+public class Y_Player : Y_Lever
+{
 
     //移動量
     Vector3 X = new Vector3(0.1f, 0);
@@ -52,6 +53,6 @@ public class Player : Swipe {
         Debug.Log("スワイプ");
     }
 
-    
+
 
 }
