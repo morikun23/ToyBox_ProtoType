@@ -1,15 +1,12 @@
 ﻿//担当者：佐藤由樹
 //概要　：入力判別用スクリプト
-//参考  ：https://gist.github.com/Buravo46/8367810
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Swipe : MonoBehaviour {
-
-    //UI?
-    GameObject square;
+public class Y_Lever : MonoBehaviour
+{
 
     //スワイプ用フラグ
     bool swipeFlg = false;
@@ -26,16 +23,21 @@ public class Swipe : MonoBehaviour {
     private Vector3 changeToPos;
 
     //判定オブジェクトのサイズ
-    private　Vector3 size;
+    private float size;
+    SpriteRenderer spRenderer;
 
     //アクション用フラグ
     bool move = false;
 
+    //角度用変数
+    Vector3 direction;
+    double rad;
 
     void Start()
     {
         //サイズの取得
-        size = gameObject.transform.localScale;
+        spRenderer = gameObject.GetComponent<SpriteRenderer>();
+        size = spRenderer.bounds.size.y;
     }
 
     public void Update()
@@ -46,6 +48,18 @@ public class Swipe : MonoBehaviour {
 
     void Swipes()
     {
+        //触れている指の数が０以下なら中断
+        if (Input.touchCount < 1) return;
+
+        Touch touchInfo = Input.GetTouch(0);
+
+        //deltapositonは、どれだけ指が動いたかのベクトル
+        if(Mathf.Abs(touchInfo.deltaPosition.x) > 5)
+        {
+            Debug.Log("Swiped");
+            swipeFlg = true;
+        }
+
         //オブジェクト位置取得
         position = gameObject.transform.position;
 
@@ -58,9 +72,9 @@ public class Swipe : MonoBehaviour {
         touchNowPos = Camera.main.ScreenToWorldPoint(changeToPos);
 
         //範囲内にマウスがいるか判定
-        if (touchNowPos.x <= position.x + size.x  && touchNowPos.x >= position.x - size.y &&
-            touchNowPos.y <= position.y + size.y  && touchNowPos.y >= position.y - size.y )
+        if (Physics2D.OverlapPoint(touchNowPos))
         {
+
             //タッチ
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -88,6 +102,7 @@ public class Swipe : MonoBehaviour {
                     TouchE();
                 }
                 swipeFlg = false;
+                gameObject.transform.eulerAngles = new Vector3(0, 0, 315);
 
             }
 
@@ -102,7 +117,8 @@ public class Swipe : MonoBehaviour {
 
             //初期化
             swipeFlg = false;
-            
+
+            gameObject.transform.eulerAngles = new Vector3(0, 0, 315);
         }
 
         //アクション
@@ -112,76 +128,50 @@ public class Swipe : MonoBehaviour {
 
     void Move()
     {
-        //上下左右判定
+        //判定
         GetDirection();
 
     }
 
+
     void GetDirection()
     {
-        //x座標判定用
-        float directionX = touchNowPos.x - touchStartPos.x;
-        //y座標判定用
-        float directionY = touchNowPos.y - touchStartPos.y;
-        //判定引数
-        string direction = "NULL";
+        //座標取得
+        direction = touchNowPos - transform.position;
 
-        //xが長い場合
-        if (Mathf.Abs(directionY) < Mathf.Abs(directionX))
+        //角度取得
+        rad = Mathf.Atan2(direction.y, direction.x);
+
+        //左移動
+        if (rad < 2 && rad > 0.8)
         {
-            //右にいる場合
-            if (1 < directionX)
-            {
-                direction = "right";
-            }
-            //左にいる場合
-            else if (-1 > directionX)
-            {
-                direction = "left";
-            }
-        }
-        //yが長い場合
-        else if (Mathf.Abs(directionX) < Mathf.Abs(directionY))
+            //指の位置がレバーの角度内なら
+            if (gameObject.transform.eulerAngles.z < 360 && gameObject.transform.eulerAngles.z > 270)
+                gameObject.transform.eulerAngles += new Vector3(0, 0, 5);
+            
+            //レバーが境界線をはみ出した場合
+            if (gameObject.transform.eulerAngles.z <= 270 && gameObject.transform.eulerAngles.z > 260)
+                gameObject.transform.eulerAngles = new Vector3(0, 0, 275);
+
+            Debug.Log("左周り");
+
+        }//右移動
+        else if (rad < 0.7 && rad > -1)
         {
-            //上にいる場合
-            if (1 < directionY)
-            {
-                direction = "up";
-            }
-            //下にいる場合
-            else if (-1 > directionY)
-            {
-                direction = "down";
-            }
-        }
+            //指の位置がレバーの角度内なら
+            if (gameObject.transform.eulerAngles.z < 360 && gameObject.transform.eulerAngles.z > 270)
+                gameObject.transform.eulerAngles += new Vector3(0, 0, -5);
 
-        //呼び出すものを判別
-        switch (direction)
-        {
-            case "up":
-                Up();
-                swipeFlg = true;
-                break;
+            //レバーが境界線をはみ出した場合
+            if (gameObject.transform.eulerAngles.z < 10)
+                gameObject.transform.eulerAngles = new Vector3(0, 0, 355);
 
-            case "down":
-                Down();
-                swipeFlg = true;
-                break;
-
-            case "right":
-                Right();
-                swipeFlg = true;
-                break;
-
-            case "left":
-                Left();
-                swipeFlg = true;
-                break;
+            Debug.Log("右回り");
 
         }
-
+        
     }
-
+   
 
 
     public virtual void Started()
@@ -214,3 +204,5 @@ public class Swipe : MonoBehaviour {
 
     }
 }
+
+
