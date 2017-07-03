@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gear : Swipe {
+public class Gear : Y_Swipe {
 
 
     public override void Right()
