@@ -62,7 +62,9 @@ public class Button : Swipe
 
 
     void StandBy() {
-        SpriteButton = gameObject.GetComponent<Image>();    
+        SpriteButton = gameObject.GetComponent<Image>();
+        //クリックされてる時ONにチェンジ
+        SpriteButton.sprite = OffButton;
     }
 
     public override void Started()
@@ -71,8 +73,7 @@ public class Button : Swipe
         Debug.Log("へい");
         click_flg = true;
         Debug.Log(SpriteButton);
-        //クリックされてる時ONにチェンジ
-        SpriteButton.sprite = OnButton;        
+
     }
     public override void TouchE()
     {

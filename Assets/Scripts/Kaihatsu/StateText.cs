@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class StateText : MonoBehaviour {
 
     public Text text;
-    private string go;
-    int value;
 
     public enum State{
         Newtral,    //たってる
@@ -17,13 +15,7 @@ public class StateText : MonoBehaviour {
     };
 
     public State player_state;
-    
 
-
-    void Start()
-    {
-             
-    }
 
 	// Update is called once per frame
 	void Update () {
