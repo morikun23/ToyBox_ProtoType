@@ -6,15 +6,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gear : MonoBehaviour {
+public class Gear : Swipe {
+
+
+    public override void Right()
+    {
+        transform.Rotate(0, 0, -5);
+    }
+    public override void Left()
+    {
+        transform.Rotate(0, 0, 5);
+    }
 
 
     // 歯車がキー入力で左右に動く
 
-    void Update ()
-    {
-        move();	
-	}
+
     void move()
     {
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -26,7 +33,7 @@ public class Gear : MonoBehaviour {
             transform.Rotate(0, 0, -2);
         }
     }
-
+ 
 
 
 }
