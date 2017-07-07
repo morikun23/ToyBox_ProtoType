@@ -29,7 +29,7 @@ public class Button : Y_Swipe
 
     }*/
 
-    void b_click(){
+   public void b_click(){
 
        
         if (Input.GetKey(KeyCode.Mouse0))
