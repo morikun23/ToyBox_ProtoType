@@ -31,8 +31,11 @@ public class Y_Swipe : MonoBehaviour {
     //アクション用フラグ
     bool move = false;
 
+    //角度用変数
+    Vector3 rotate;
+    double rad;
 
-    void Start()
+    public void Start()
     {
         //サイズの取得
         size = gameObject.transform.localScale;
@@ -114,6 +117,7 @@ public class Y_Swipe : MonoBehaviour {
     {
         //上下左右判定
         GetDirection();
+        GetRotate();
 
     }
 
@@ -182,7 +186,29 @@ public class Y_Swipe : MonoBehaviour {
 
     }
 
+    void GetRotate()
+    {
+        Debug.Log("rotate");
+        //座標取得
+        rotate = touchNowPos - transform.position;
 
+        //角度取得
+        rad = Mathf.Atan2(rotate.y, rotate.x);
+
+        //左移動
+        if (rad < 2 && rad > 0.8)
+        {
+
+            LeftR();
+
+        }//右移動
+        else if (rad < 0.7 && rad > -1)
+        {
+
+            RightR();
+
+        }
+    }
 
     public virtual void Started()
     {
@@ -210,6 +236,16 @@ public class Y_Swipe : MonoBehaviour {
 
     }
     public virtual void SwipeE()
+    {
+
+    }
+
+    public virtual void RightR()
+    {
+
+    }
+
+    public virtual void LeftR()
     {
 
     }
