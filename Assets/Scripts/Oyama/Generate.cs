@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Generate : MonoBehaviour {
-
+    
     public GameObject ball;
 
 	// Use this for initialization
