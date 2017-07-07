@@ -27,16 +27,29 @@ public class PlayerMove : MonoBehaviour {
 	public PullBlock scr_pullBlock;
 
 	private float num_velocityY;
-	private bool flg_hitGround;
+
+	private Collision2D m_col_object;
+	private SpriteRenderer m_spr_object;
+
+	public GameObject m_obj_point;
+	private Vector2 m_pos_point;
+
+	private float m_num_sprWidth;
+
+	public Collider2D col_object;
+	public PhysicsMaterial2D phy_neutoral;
+	public PhysicsMaterial2D phy_move;
 
 	// Use this for initialization
 	void Start () {
 		com_rigidBody = GetComponent<Rigidbody2D> ();
+
+		m_spr_object = GetComponent<SpriteRenderer> ();
+		m_num_sprWidth = m_spr_object.bounds.size.x / 2;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		GroundJudge ();
 
 		switch (enu_status) {
 		case Status.Neutoral:
@@ -54,26 +67,34 @@ public class PlayerMove : MonoBehaviour {
 		}
 	}
 
-	void AddPosition(Vector2 vec){
+	void AddPositionX(float x){
 		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
-		baf_rigidbody.velocity = vec;
+		//baf_rigidbody.velocity = vec;
+		transform.Translate (new Vector3(x,0,0));
+	}
+	void AddPositionY(float y){
+		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
+		baf_rigidbody.AddForce(new Vector2(0,y));
+		//transform.Translate (vec);
 	}
 
 	void NeutoralMove(){
 		//値を変動させるためのバッファ用変数定義
 		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
-		float baf_x;
-		//if (flg_hitGround) {
-		//	baf_x = baf_rigidbody.velocity.x;
-		//} else {
-			baf_x = 0;
-		//}
 
+		float baf_x = 0;
 		float baf_y = baf_rigidbody.velocity.y;
 
 		if (baf_rigidbody.constraints == RigidbodyConstraints2D.FreezeAll) {
 			baf_y = num_velocityY;
 			baf_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+		}
+
+		m_pos_point = m_obj_point.transform.position;
+		if (RayCast (Vector3.down)) {
+			col_object.sharedMaterial = phy_neutoral;
+		} else {
+			col_object.sharedMaterial = phy_move;
 		}
 
 		//矢印キーで移動
@@ -84,17 +105,25 @@ public class PlayerMove : MonoBehaviour {
 			} else {
 				GetComponent<SpriteRenderer> ().flipX = false;
 			}
-		}
-		if (Input.GetButtonDown ("Vertical")) {
-			baf_y = spd_jump;
+
+			AddPositionX (baf_x);
+		} else {
+			//baf_x = 0;
 		}
 
-		AddPosition (new Vector2(baf_x,baf_y));
+		if (Input.GetButtonDown ("Vertical")) {
+			baf_y = spd_jump;
+			AddPositionY (baf_y);
+		}
+			
+
 
 		//クリックでワイヤー射出
 		if(Input.GetMouseButtonDown(0)){
 			ShotWire ();
 		}
+
+
 	}
 
 	void ConnectedMove(){
@@ -115,6 +144,13 @@ public class PlayerMove : MonoBehaviour {
 		float baf_y = baf_rigidbody.velocity.y;
 		baf_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
 
+		m_pos_point = m_obj_point.transform.position;
+		if (RayCast (Vector3.down)) {
+			col_object.sharedMaterial = phy_neutoral;
+		} else {
+			col_object.sharedMaterial = phy_move;
+		}
+
 		//矢印キーで移動
 		if (Input.GetButton ("Horizontal")) {
 			baf_x = Input.GetAxis ("Horizontal") * spd_move;
@@ -123,13 +159,15 @@ public class PlayerMove : MonoBehaviour {
 			} else {
 				GetComponent<SpriteRenderer> ().flipX = false;
 			}
+			AddPositionX (baf_x);
+		} else {
+			//baf_x = 0;
 		}
+
 		if (Input.GetButtonDown ("Vertical")) {
 			baf_y = spd_jump / 2;
+			AddPositionY (baf_y);
 		}
-
-
-		AddPosition (new Vector2(baf_x,baf_y));
 
 		//クリックで持っているブロックを置き、ニュートラルに戻る
 		if(Input.GetMouseButtonDown(0)){
@@ -157,18 +195,24 @@ public class PlayerMove : MonoBehaviour {
 		enu_status = Status.WireShoted;
 	}
 
-	void GroundJudge(){
-		RaycastHit2D baf_ray = Physics2D.Raycast (new Vector3(transform.position.x,transform.position.y - 0.5f,transform.position.z), Vector2.down, 0.1f);
-
-		if (baf_ray) {
-			flg_hitGround = true;
-			//Debug.Log (baf_ray.collider.gameObject.name);
-		} else {
-			flg_hitGround = false;
-		}
-	}
-
 	void SightControll(){
 	}
 
+	bool RayCast(Vector2 arg_direction){
+
+		Vector3 baf_vec = new Vector3 (m_pos_point.x + m_num_sprWidth / 2,m_pos_point.y,0);
+		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
+		int layerMask = 1 << LayerMask.NameToLayer ("Ground");
+		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth + 0.01f / 2,layerMask)){
+			return true;
+		}
+
+		baf_vec = new Vector3 (m_pos_point.x - m_num_sprWidth / 2,m_pos_point.y,0);
+		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
+		layerMask = 1 << LayerMask.NameToLayer ("Ground");
+		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth / 2,layerMask)){
+			return true;
+		}
+		return false;
+	}
 }

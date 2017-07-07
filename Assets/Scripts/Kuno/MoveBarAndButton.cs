@@ -68,8 +68,8 @@ public class MoveBarAndButton : MonoBehaviour {
 			baf_spd.y -= spd_comeMove;
 		}
 
-		obj_block.transform.Translate (baf_spd);
-		//com_rigidbody.velocity = baf_spd;
+		//obj_block.transform.Translate (baf_spd);
+		com_rigidbody.velocity = baf_spd;
 	}
 
 	void Back(){
@@ -89,8 +89,8 @@ public class MoveBarAndButton : MonoBehaviour {
 				baf_spd.y += spd_backMove;
 			}
 
-		obj_block.transform.Translate (baf_spd);
-		//com_rigidbody.velocity = baf_spd;
+		//obj_block.transform.Translate (baf_spd);
+		com_rigidbody.velocity = baf_spd;
 	}
 
 }
