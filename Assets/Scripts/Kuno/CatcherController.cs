@@ -6,9 +6,9 @@ public class CatcherController : MonoBehaviour {
 
 	//スポーン時に必要な値
 	public GameObject obj_initPos;		//キャッチャーの戻る場所
-	public float spd_expansion;		//プレーヤーから伸びるスピード
-	public GameObject obj_Lead;		//キャッチャーとつながるオブジェクト(つまりプレーヤー)
-	public Vector3 pos_end;			//このＭＨの終着点
+	public float spd_expansion;			//プレーヤーから伸びるスピード
+	public PlayerMove scr_playerMove;	//キャッチャーとつながるオブジェクト(つまりプレーヤー)
+	public Vector3 pos_end;				//このＭＨの終着点
 
 	//その他変数
 	private float num_distance = 0;		//現在のプレーヤーからの距離
@@ -21,11 +21,19 @@ public class CatcherController : MonoBehaviour {
 
 	public PullBlock scr_pullBlock;
 
+	private GameObject obj_armCollider;
+	public GameObject pre_armCollider;
+	LineRenderer lir_;
+	GameObject obj_player;
+
+	bool flg_stay = false;
+
 	//状態管理用enum
 	public enum Status{
 		Neutoral,
 		Shot,
 		HitPullBlock,
+		HitStayBlock,
 		HitApproachBlock,
 		HitNomalBlock,
 		Cancel,
@@ -38,6 +46,18 @@ public class CatcherController : MonoBehaviour {
 	void Start () {
 		com_rigidbody = GetComponent<Rigidbody2D> (); 
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+		gameObject.AddComponent<LineRenderer>();
+
+		lir_ = gameObject.GetComponent<LineRenderer>();
+		obj_player = GameObject.Find ("CatcherPos");
+		// 線の幅
+		lir_.SetWidth(0.1f, 0.1f);
+		// 頂点の数
+		lir_.SetVertexCount(2);
+
+		lir_.material.color = Color.black;
+
 	}
 
 	// Update is called once per frame
@@ -52,6 +72,9 @@ public class CatcherController : MonoBehaviour {
 		case Status.HitApproachBlock:
 			HitApproachBlock ();
 			break;
+		case Status.HitStayBlock:
+			HitStayBlock ();
+			break;
 		case Status.HitPullBlock:
 			HitPullBlock ();
 			break;
@@ -62,6 +85,10 @@ public class CatcherController : MonoBehaviour {
 			Cancel();
 			break;
 		}
+
+		// 頂点を設定
+		lir_.SetPosition(0, obj_player.transform.position);
+		lir_.SetPosition (1, transform.position);
 	}
 
 
@@ -80,6 +107,9 @@ public class CatcherController : MonoBehaviour {
 			scr_pullBlock = col.gameObject.GetComponent<PullBlock> ();
 			scr_pullBlock.AttachParent (gameObject);
 			enu_status = Status.HitPullBlock;
+			break;
+		case "StayBlock":
+			enu_status = Status.HitStayBlock;
 			break;
 		case "NomalBlock":
 			enu_status = Status.HitNomalBlock;
@@ -101,6 +131,7 @@ public class CatcherController : MonoBehaviour {
 	void SetPositionToInit(){
 		transform.position = obj_initPos.transform.position;
 		enu_status = Status.Shot;
+		flg_stay = false;
 	}
 
 	//前方へ進行する
@@ -110,29 +141,54 @@ public class CatcherController : MonoBehaviour {
 		num_distance += spd_expansion;
 
 		if(cnt_live == 0){
-			if (PlayerCheck () != null) {
-				PlayerMove baf_playerMove = PlayerCheck ();
-				baf_playerMove.flg_shoted = false;
-				baf_playerMove.enu_status = PlayerMove.Status.Neutoral;
-				Destroy (gameObject);
-			}
+			scr_playerMove.flg_shoted = false;
+			scr_playerMove.enu_status = PlayerMove.Status.Neutoral;
+			Destroy (gameObject);
 		}
 	}
 
 	void HitApproachBlock(){
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+		scr_playerMove.enu_status = PlayerMove.Status.WireConnected;
 
-		//ひっかけたのがプレーヤーなら、プレーヤーを状態遷移させる
-		if(PlayerCheck() != null){
-			PlayerMove spr_playerMove = PlayerCheck ();
-			spr_playerMove.enu_status = PlayerMove.Status.WireConnected;
+		GameObject baf_player = scr_playerMove.gameObject;
+		com_rigidbody.isKinematic = false;
+
+		float baf_atan = Mathf.Atan2 (transform.position.y - scr_playerMove.transform.position.y,transform.position.x - scr_playerMove.transform.position.x);
+		//baf_atan = Mathf.Rad2Deg * baf_atan;
+
+		float baf_cos = Mathf.Cos (baf_atan) * spd_expansion;
+		float baf_sin = Mathf.Sin (baf_atan) * spd_expansion;
+		baf_player.transform.Translate(baf_cos,baf_sin,0);
+
+		num_distance -= spd_expansion;
+
+		if(num_distance < 0.3f){
+			enu_status = Status.HitStayBlock;
 		}
-
 	}
 
 	void HitPullBlock(){
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
 		enu_status = Status.Cancel;
+	}
+
+	void HitStayBlock(){
+		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+		scr_playerMove.enu_status = PlayerMove.Status.WireConnected;
+		if (!flg_stay) {
+			flg_stay = true;
+			//コライダーを作る
+			obj_armCollider = Instantiate (pre_armCollider, transform.position, Quaternion.identity) as GameObject;
+			obj_armCollider.transform.rotation = Quaternion.FromToRotation (Vector3.up, obj_player.transform.position - obj_armCollider.transform.position);
+			obj_armCollider.transform.position = (obj_player.transform.position + obj_armCollider.transform.position) / 2;
+			obj_armCollider.transform.localScale = new Vector3 (obj_armCollider.transform.localScale.x, (obj_player.transform.position - obj_armCollider.transform.position).magnitude * 2, obj_armCollider.transform.localScale.z);
+		}
+
+		if(Input.GetKeyDown(KeyCode.Mouse0)){
+			Destroy (obj_armCollider);
+			enu_status = Status.Cancel;
+		}
 	}
 
 	void HitNomalBlock(){
@@ -146,20 +202,17 @@ public class CatcherController : MonoBehaviour {
 		num_distance -= spd_expansion;
 
 		if(num_distance < 0){
-			if (PlayerCheck () != null) {
-				PlayerMove baf_playerMove = PlayerCheck ();
 
-				baf_playerMove.flg_shoted = false;
-				if (scr_pullBlock != null) {
-					scr_pullBlock.AttachParent (obj_Lead, new Vector2 (0, 1));
-					baf_playerMove.enu_status = PlayerMove.Status.BoxCarry;
-					baf_playerMove.scr_pullBlock = scr_pullBlock;
-				} else {
-					baf_playerMove.enu_status = PlayerMove.Status.Neutoral;
-				}
+			scr_playerMove.flg_shoted = false;
+			if (scr_pullBlock != null) {
+				scr_pullBlock.AttachParent (scr_playerMove.gameObject, new Vector2 (0, 1));
+				scr_playerMove.enu_status = PlayerMove.Status.BoxCarry;
+				scr_playerMove.scr_pullBlock = scr_pullBlock;
+			} else {
+				scr_playerMove.enu_status = PlayerMove.Status.Neutoral;
+			}
 
 				Destroy (gameObject);
-			}
 		}
 	}
 
@@ -167,12 +220,4 @@ public class CatcherController : MonoBehaviour {
 		
 	}
 
-	//Obj_Leadに引っかかっているのがプレーヤーかどうか調べる(まあプレーヤーなんだけど)
-	PlayerMove PlayerCheck(){
-		if(obj_Lead.gameObject.tag == "Player")
-			return obj_Lead.GetComponent<PlayerMove>();
-
-		return null;
-
-	}
 }

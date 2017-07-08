@@ -168,7 +168,7 @@ public class PlayerMove : MonoBehaviour {
 		}
 
 		//クリックで持っているブロックを置き、ニュートラルに戻る
-		if(Input.GetMouseButtonDown(0)){
+		if(Input.GetKeyDown(KeyCode.Mouse0)){
 			scr_pullBlock.RemoveParent ();
 			enu_status = Status.Neutoral;
 		}
@@ -190,7 +190,7 @@ public class PlayerMove : MonoBehaviour {
 		CatcherController scr_catcherController = obj_shotChatcher.GetComponent<CatcherController>();
 		obj_shotChatcher.transform.eulerAngles = new Vector3 (0,0,baf_rotation * Mathf.Rad2Deg);
 		scr_catcherController.obj_initPos = obj_catcherPos;
-		scr_catcherController.obj_Lead = this.gameObject;
+		scr_catcherController.scr_playerMove = GetComponent<PlayerMove> ();
 
 		flg_shoted = true;
 		enu_status = Status.WireShoted;

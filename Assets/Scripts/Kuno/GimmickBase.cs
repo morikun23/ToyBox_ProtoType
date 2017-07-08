@@ -6,21 +6,21 @@ public class GimmickBase : Y_Swipe {
 
 	public bool flg_isApproach;
 
-	public PlayerMove spr_playerMove;
+	public PlayerMove scr_playerMove;
 
 	public void Start(){
 		base.Start ();
 		GameObject baf_obj;
 		baf_obj = GameObject.FindGameObjectWithTag("Player");
-		spr_playerMove = baf_obj.GetComponent<PlayerMove> ();
+		scr_playerMove = baf_obj.GetComponent<PlayerMove> ();
 	}
 
 	public override void TouchE ()
 	{
-		if (!flg_isApproach)
+		if (!flg_isApproach || scr_playerMove.enu_status != PlayerMove.Status.Neutoral)
 			return;
 
-		spr_playerMove.ShotWire(transform.position);
+		scr_playerMove.ShotWire(transform.position);
 
 	}
 

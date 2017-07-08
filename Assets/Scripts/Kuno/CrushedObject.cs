@@ -20,7 +20,7 @@ public class CrushedObject : MonoBehaviour {
 	void Start () {
 		//m_col_object = GetComponent<Collider> ();
 		m_spr_object = GetComponent<SpriteRenderer> ();
-		m_num_sprWidth = m_spr_object.bounds.size.x / 2;
+		m_num_sprWidth = m_spr_object.bounds.size.x / 4;
 	}
 	
 	// Update is called once per frame
@@ -32,7 +32,7 @@ public class CrushedObject : MonoBehaviour {
 		if(RayCast (Vector2.up)) m_num_retunValue += 4;
 		if(RayCast (Vector2.down)) m_num_retunValue += 8;
 
-		//Debug.Log (m_num_retunValue);
+		Debug.Log (m_num_retunValue);
 
 		if ((m_num_retunValue & 3) == 3 || (m_num_retunValue & 12) == 12) {
 			m_flg_Crushed = true;
@@ -45,10 +45,10 @@ public class CrushedObject : MonoBehaviour {
 	}
 
 	bool RayCast(Vector2 arg_direction){
-		//Debug.DrawRay (m_pos_point,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
+		Debug.DrawRay (m_pos_point,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
 
 		int layerMask = 1 << LayerMask.NameToLayer ("Ground");
-		if (Physics2D.Raycast (m_pos_point, arg_direction, m_num_sprWidth / 2,layerMask)){
+		if (Physics2D.Raycast (m_pos_point, arg_direction, m_num_sprWidth,layerMask)){
 			return true;
 		}
 		return false;
