@@ -8,6 +8,7 @@ public class CatcherController : MonoBehaviour {
 	public GameObject obj_initPos;		//キャッチャーの戻る場所
 	public float spd_expansion;		//プレーヤーから伸びるスピード
 	public GameObject obj_Lead;		//キャッチャーとつながるオブジェクト(つまりプレーヤー)
+	public Vector3 pos_end;			//このＭＨの終着点
 
 	//その他変数
 	private float num_distance = 0;		//現在のプレーヤーからの距離

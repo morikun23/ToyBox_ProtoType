@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PullBlock : MonoBehaviour {
+public class PullBlock : GimmickBase {
 
 	Rigidbody2D com_rigidbody;
 	private float num_mass;
@@ -10,15 +10,14 @@ public class PullBlock : MonoBehaviour {
 	public BoxCollider2D col_toPlayer;
 	public BoxCollider2D col_toGround;
 
+	public PlayerMove scr_player;
+
 	// Use this for initialization
-	void Start () {
+	public void Start(){
+		base.Start ();
 		com_rigidbody = GetComponent<Rigidbody2D> ();
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
 		num_mass = com_rigidbody.mass;
-	}
-	
-	// Update is called once per frame
-	void Update () {
 	}
 
 	public void AttachParent(GameObject parent){
@@ -59,4 +58,6 @@ public class PullBlock : MonoBehaviour {
 			return false;
 		}
 	}
+
+
 }

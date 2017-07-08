@@ -120,7 +120,7 @@ public class PlayerMove : MonoBehaviour {
 
 		//クリックでワイヤー射出
 		if(Input.GetMouseButtonDown(0)){
-			ShotWire ();
+			//ShotWire ();
 		}
 
 
@@ -160,8 +160,6 @@ public class PlayerMove : MonoBehaviour {
 				GetComponent<SpriteRenderer> ().flipX = false;
 			}
 			AddPositionX (baf_x);
-		} else {
-			//baf_x = 0;
 		}
 
 		if (Input.GetButtonDown ("Vertical")) {
@@ -177,13 +175,16 @@ public class PlayerMove : MonoBehaviour {
 	}
 
 
-	void ShotWire(){
+	public void ShotWire(Vector3 objPos){
 		if (flg_shoted)
 			return;
 
 		//マウスの方向に射出
-		Vector3 baf_mouse = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-		float baf_rotation = Mathf.Atan2(baf_mouse.y - transform.position.y,baf_mouse.x - transform.position.x);
+		//Vector3 baf_mouse = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		//float baf_rotation = Mathf.Atan2(baf_mouse.y - obj_catcherPos.transform.position.y,baf_mouse.x - obj_catcherPos.transform.position.x);
+
+		//引数のposに射出
+		float baf_rotation = Mathf.Atan2(objPos.y - obj_catcherPos.transform.position.y,objPos.x - obj_catcherPos.transform.position.x);
 
 		obj_shotChatcher = Instantiate (obj_catcher,transform.position,Quaternion.identity);
 		CatcherController scr_catcherController = obj_shotChatcher.GetComponent<CatcherController>();
