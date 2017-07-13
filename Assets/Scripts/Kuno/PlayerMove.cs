@@ -119,13 +119,6 @@ public class PlayerMove : MonoBehaviour {
 			baf_y = spd_jump;
 			AddPositionY (baf_y);
 		}
-			
-
-
-		//クリックでワイヤー射出
-		if(Input.GetMouseButtonDown(0)){
-			//ShotWire ();
-		}
 
 
 	}
