@@ -7,10 +7,8 @@ public class PullBlock : GimmickBase {
 	Rigidbody2D com_rigidbody;
 	private float num_mass;
 
-	public BoxCollider2D col_toPlayer;
-	public BoxCollider2D col_toGround;
-
-	public PlayerMove scr_player;
+	public Collider2D col_toPlayer;
+	public Collider2D col_toGround;
 
 	// Use this for initialization
 	public void Start(){

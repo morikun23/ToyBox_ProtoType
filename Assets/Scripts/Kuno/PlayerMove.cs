@@ -40,6 +40,8 @@ public class PlayerMove : MonoBehaviour {
 	public PhysicsMaterial2D phy_neutoral;
 	public PhysicsMaterial2D phy_move;
 
+	public TimeManager scr_timeManager;
+
 	// Use this for initialization
 	void Start () {
 		com_rigidBody = GetComponent<Rigidbody2D> ();
@@ -70,11 +72,13 @@ public class PlayerMove : MonoBehaviour {
 	void AddPositionX(float x){
 		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
 		//baf_rigidbody.velocity = vec;
-		transform.Translate (new Vector3(x,0,0));
+		transform.Translate (new Vector3(x * Time.deltaTime,0,0));
 	}
 	void AddPositionY(float y){
 		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
-		baf_rigidbody.AddForce(new Vector2(0,y));
+		if(TimeManager.m_num_timeScale != 0){
+			baf_rigidbody.AddForce(new Vector2(0,y * 1 / TimeManager.m_num_timeScale));
+		}
 		//transform.Translate (vec);
 	}
 

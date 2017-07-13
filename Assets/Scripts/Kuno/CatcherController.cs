@@ -42,6 +42,8 @@ public class CatcherController : MonoBehaviour {
 	}
 	public Status enu_status;
 
+	public TimeManager scr_timeManager;
+
 	// Use this for initialization
 	void Start () {
 		com_rigidbody = GetComponent<Rigidbody2D> (); 
@@ -58,10 +60,13 @@ public class CatcherController : MonoBehaviour {
 
 		lir_.material.color = Color.black;
 
+		GameObject baf_obj = GameObject.Find ("TimeManager");
+		scr_timeManager = baf_obj.GetComponent<TimeManager> ();
+
 	}
 
 	// Update is called once per frame
-	void FixedUpdate () {
+	void Update () {
 		switch (enu_status) {
 		case Status.Neutoral:
 			SetPositionToInit ();
@@ -136,13 +141,17 @@ public class CatcherController : MonoBehaviour {
 
 	//前方へ進行する
 	void AddPosition(){
-		transform.Translate(spd_expansion,0,0);
+		TimeManager.m_num_timeScale = 0.1f;
+		scr_timeManager.TimeStop ();
+
+		transform.Translate(spd_expansion * Time.unscaledDeltaTime,0,0);
 		cnt_live--;
 		num_distance += spd_expansion;
 
 		if(cnt_live == 0){
 			scr_playerMove.flg_shoted = false;
 			scr_playerMove.enu_status = PlayerMove.Status.Neutoral;
+			scr_timeManager.TimeStart();
 			Destroy (gameObject);
 		}
 	}
@@ -157,8 +166,8 @@ public class CatcherController : MonoBehaviour {
 		float baf_atan = Mathf.Atan2 (transform.position.y - scr_playerMove.transform.position.y,transform.position.x - scr_playerMove.transform.position.x);
 		//baf_atan = Mathf.Rad2Deg * baf_atan;
 
-		float baf_cos = Mathf.Cos (baf_atan) * spd_expansion;
-		float baf_sin = Mathf.Sin (baf_atan) * spd_expansion;
+		float baf_cos = Mathf.Cos (baf_atan) * spd_expansion * Time.unscaledDeltaTime;
+		float baf_sin = Mathf.Sin (baf_atan) * spd_expansion * Time.unscaledDeltaTime;
 		baf_player.transform.Translate(baf_cos,baf_sin,0);
 
 		num_distance -= spd_expansion;
@@ -198,11 +207,11 @@ public class CatcherController : MonoBehaviour {
 
 	void Cancel(){
 		com_rigidbody.isKinematic = false;
-		transform.Translate(-spd_expansion,0,0);
+		transform.Translate(-spd_expansion * Time.unscaledDeltaTime,0,0);
 		num_distance -= spd_expansion;
 
 		if(num_distance < 0){
-
+			
 			scr_playerMove.flg_shoted = false;
 			if (scr_pullBlock != null) {
 				scr_pullBlock.AttachParent (scr_playerMove.gameObject, new Vector2 (0, 1));
@@ -211,8 +220,9 @@ public class CatcherController : MonoBehaviour {
 			} else {
 				scr_playerMove.enu_status = PlayerMove.Status.Neutoral;
 			}
-
-				Destroy (gameObject);
+			TimeManager.m_num_timeScale = 1;
+			scr_timeManager.TimeStart();
+			Destroy (gameObject);
 		}
 	}
 
