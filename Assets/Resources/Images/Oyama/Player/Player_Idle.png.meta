@@ -1,15 +1,11 @@
 fileFormatVersion: 2
-guid: 88b4545bec966e9449a4cdcb707e8895
-timeCreated: 1499735907
+guid: 3f6fc9365cf7dd04f82ce4a7ed941bcf
+timeCreated: 1499908001
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: majihankun_0
-    21300002: majihankun_1
-    21300004: majihankun_2
-    21300006: majihankun_3
-    21300008: majihankun_4
-    21300010: majihankun_5
+    21300000: Player_Idle_0
+    21300002: Player_Idle_1
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -84,59 +80,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: majihankun_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 300
-        width: 60
-        height: 60
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: majihankun_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 240
-        width: 60
-        height: 60
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: majihankun_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 180
-        width: 60
-        height: 60
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: majihankun_3
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 120
-        width: 60
-        height: 60
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: majihankun_4
+      name: Player_Idle_0
       rect:
         serializedVersion: 2
         x: 0
@@ -144,12 +88,12 @@ TextureImporter:
         width: 60
         height: 60
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: majihankun_5
+      name: Player_Idle_1
       rect:
         serializedVersion: 2
         x: 0
@@ -157,7 +101,7 @@ TextureImporter:
         width: 60
         height: 60
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
