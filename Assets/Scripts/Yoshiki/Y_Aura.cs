@@ -26,8 +26,11 @@ public class Y_Aura : MonoBehaviour {
 
         //取得
         spRenderer = GetComponent<SpriteRenderer>();
+        transform.localPosition = new Vector3(0, 0, 0);
+        transform.localScale = new Vector3(1.16f, 1.16f, 1);
+        transform.localEulerAngles = new Vector3(0, 0, 0);
 
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -69,6 +72,7 @@ public class Y_Aura : MonoBehaviour {
     //射程範囲内の時
     void OnTriggerStay2D(Collider2D other)
     {
+        if(other.tag == "Field")
         rangeT = true;
     }
 
