@@ -16,9 +16,11 @@ public class TutorialBoard : MonoBehaviour {
 
     //主人公が近づいた時に表示するウィンドウの大元
     GameObject m_window;
+    //ふきだしオブジェクト
+    GameObject m_boardBaloon;
 
     //CircleCast用の半径の値
-    float rad = 0.4f;
+    const float rad = 0.4f;
 
     /// <summary>
     /// 初期化関数
@@ -29,15 +31,18 @@ public class TutorialBoard : MonoBehaviour {
 	public void Init (int arg_number) {
         m_window = transform.FindChild("PF_TutorialWindow").gameObject;
         m_window.SetActive(false);
+
+        m_boardBaloon = transform.FindChild("BoardBaloon").gameObject;
         
+
         m_myNumber = arg_number;
 
         m_sprite = Resources.Load<Sprite>(m_SPpass + m_myNumber);
         SetSprite(m_sprite);
 	}
 
-    // Update is called once per frame
-    void Update()
+    // アップデート関数
+    public void UpdateByMyFrame()
     {
 
         Ray ray = new Ray(transform.position, Vector3.back);
@@ -50,11 +55,13 @@ public class TutorialBoard : MonoBehaviour {
             if (hit.transform.gameObject.tag == "Player")
             {
                 m_window.SetActive(true);
+                m_boardBaloon.SetActive(false);
             }
 
         }
         else {
             m_window.SetActive(false);
+            m_boardBaloon.SetActive(true);
         }
 
         Debug.DrawRay(ray.origin, ray.direction, Color.red, 0.1f);
