@@ -52,17 +52,17 @@ public class TutorialBoard : MonoBehaviour {
         if (hit.collider)
         {
             Debug.Log("in");
-            if (hit.transform.gameObject.tag == "Player")
+			if (hit.collider.tag == "Player")
             {
                 m_window.SetActive(true);
                 m_boardBaloon.SetActive(false);
             }
-
+			else {
+				m_window.SetActive(false);
+				m_boardBaloon.SetActive(true);
+			}
         }
-        else {
-            m_window.SetActive(false);
-            m_boardBaloon.SetActive(true);
-        }
+        
 
         Debug.DrawRay(ray.origin, ray.direction, Color.red, 0.1f);
     }
