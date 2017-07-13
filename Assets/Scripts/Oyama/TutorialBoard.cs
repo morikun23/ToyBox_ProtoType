@@ -47,22 +47,23 @@ public class TutorialBoard : MonoBehaviour {
 
         Ray ray = new Ray(transform.position, Vector3.back);
         //Debug.DrawRay(ray.origin, ray.direction, Color.red, 0.1f);
-        RaycastHit2D hit = Physics2D.CircleCast(ray.origin, rad,ray.direction, 1);
+        RaycastHit2D hit = Physics2D.CircleCast(ray.origin, rad,ray.direction, 1, 1 << 8);
+
 
         if (hit.collider)
         {
-            Debug.Log("in");
-			if (hit.collider.tag == "Player")
-            {
+
+            
                 m_window.SetActive(true);
                 m_boardBaloon.SetActive(false);
-            }
-			else {
-				m_window.SetActive(false);
-				m_boardBaloon.SetActive(true);
-			}
+           
+
         }
-        
+        else {
+            m_window.SetActive(false);
+            m_boardBaloon.SetActive(true);
+        }
+
 
         Debug.DrawRay(ray.origin, ray.direction, Color.red, 0.1f);
     }
