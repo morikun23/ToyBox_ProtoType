@@ -77,24 +77,30 @@ public class Y_Aura : MonoBehaviour {
     //射程範囲内の時
     void OnTriggerStay2D(Collider2D other)
     {
-        if(other.tag == "Field")
-        rangeT = true;
-        if (soundFlg == 0)
+        if (other.tag == "Field")
         {
-            sound01.PlayOneShot(sound01.clip);
-            soundFlg++;
+            rangeT = true;
+            if (soundFlg == 0)
+            {
+                sound01.PlayOneShot(sound01.clip);
+                soundFlg++;
+            }
         }
+        
     }
 
     //射程範囲外の時
     void OnTriggerExit2D(Collider2D other)
     {
-        //透明にする
-        rangeT = false;
-        color = spRenderer.color;
-        color.a = (float)0.001;
-        spRenderer.color = color;
-        soundFlg = 0;
+        if (other.tag == "Field")
+        {
+            //透明にする
+            rangeT = false;
+            color = spRenderer.color;
+            color.a = (float)0.001;
+            spRenderer.color = color;
+            soundFlg = 0;
+        }
     }
 
 }
