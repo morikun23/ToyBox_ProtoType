@@ -12,6 +12,8 @@ public class PlayerMove : MonoBehaviour {
 
 	public float rot_mouse;
 
+    Animator m_anime;
+
 	public enum Status{
 		Neutoral,
 		WireShoted,
@@ -51,6 +53,8 @@ public class PlayerMove : MonoBehaviour {
 
 		m_spr_object = GetComponent<SpriteRenderer> ();
 		m_num_sprWidth = m_spr_object.bounds.size.x / 2;
+
+        m_anime = GetComponent<Animator>();
 	}
 
 	// Update is called once per frame
@@ -104,14 +108,17 @@ public class PlayerMove : MonoBehaviour {
 		if (baf_rigidbody.constraints == RigidbodyConstraints2D.FreezeAll) {
 			baf_y = num_velocityY;
 			baf_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-		}
+
+        }
 
 		m_pos_point = m_obj_point.transform.position;
 		if (RayCast (Vector3.down)) {
 			col_object.sharedMaterial = phy_neutoral;
-		} else {
+            m_anime.SetBool("JumpFlag", false);
+        } else {
 			col_object.sharedMaterial = phy_move;
-		}
+            
+        }
 
 		//矢印キーで移動
 		if (Input.GetButton ("Horizontal")) {
@@ -121,16 +128,19 @@ public class PlayerMove : MonoBehaviour {
 			} else {
 				GetComponent<SpriteRenderer> ().flipX = false;
 			}
-
-			AddPositionX (baf_x);
+            m_anime.SetBool("RunFlag", true);
+            AddPositionX (baf_x);
 		} else {
-			//baf_x = 0;
-		}
+            //baf_x = 0;
+            m_anime.SetBool("RunFlag", false);
+        }
 
 		if (Input.GetButtonDown ("Vertical")) {
 			baf_y = spd_jump;
 			AddPositionY (baf_y);
-		}
+            m_anime.SetBool("RunFlag", false);
+            m_anime.SetBool("JumpFlag", true);
+        }
 
 
 	}
@@ -147,8 +157,10 @@ public class PlayerMove : MonoBehaviour {
 	}
 
 	void BoxCarry(){
-		//値を変動させるためのバッファ用変数定義
-		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
+        m_anime.SetBool("HoldFlag", true);
+
+        //値を変動させるためのバッファ用変数定義
+        Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
 		float baf_x = 0;
 		float baf_y = baf_rigidbody.velocity.y;
 		baf_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -160,16 +172,23 @@ public class PlayerMove : MonoBehaviour {
 			col_object.sharedMaterial = phy_move;
 		}
 
-		//矢印キーで移動
-		if (Input.GetButton ("Horizontal")) {
-			baf_x = Input.GetAxis ("Horizontal") * spd_move;
-			if (Input.GetAxis ("Horizontal") >= 0) {
-				GetComponent<SpriteRenderer> ().flipX = true;
-			} else {
-				GetComponent<SpriteRenderer> ().flipX = false;
-			}
-			AddPositionX (baf_x);
-		}
+        //矢印キーで移動
+        if (Input.GetButton("Horizontal"))
+        {
+            baf_x = Input.GetAxis("Horizontal") * spd_move;
+            if (Input.GetAxis("Horizontal") >= 0)
+            {
+                GetComponent<SpriteRenderer>().flipX = true;
+            }
+            else {
+                GetComponent<SpriteRenderer>().flipX = false;
+            }
+            AddPositionX(baf_x);
+            m_anime.SetBool("HoldRunFlag", true);
+        }
+        else {
+            m_anime.SetBool("HoldRunFlag", false);
+        }
 
 		if (Input.GetButtonDown ("Vertical")) {
 			baf_y = spd_jump / 2;
@@ -179,7 +198,9 @@ public class PlayerMove : MonoBehaviour {
 		//クリックで持っているブロックを置き、ニュートラルに戻る
 		if(Input.GetKeyDown(KeyCode.Mouse0)){
 			scr_pullBlock.RemoveParent ();
-			enu_status = Status.Neutoral;
+            m_anime.SetBool("HoldFlag", false);
+            m_anime.SetBool("HoldRunFlag", false);
+            enu_status = Status.Neutoral;
 		}
 	}
 
@@ -202,7 +223,11 @@ public class PlayerMove : MonoBehaviour {
 		scr_catcherController.scr_playerMove = GetComponent<PlayerMove> ();
 
 		flg_shoted = true;
-		enu_status = Status.WireShoted;
+
+        m_anime.SetBool("RunFlag", false);
+        m_anime.SetBool("JumpFlag", false);
+
+        enu_status = Status.WireShoted;
 	}
 
 	void SightControll(){
