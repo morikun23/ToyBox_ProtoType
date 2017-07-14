@@ -21,6 +21,10 @@ public class Y_Aura : MonoBehaviour {
     //距離測定フラグ
     bool rangeT = false;
 
+    private AudioSource sound01;
+
+    int soundFlg = 0;
+
     // Use this for initialization
     void Start () {
 
@@ -29,6 +33,7 @@ public class Y_Aura : MonoBehaviour {
         transform.localPosition = new Vector3(0, 0, 0);
         transform.localScale = new Vector3(1.16f, 1.16f, 1);
         transform.localEulerAngles = new Vector3(0, 0, 0);
+        sound01 = GetComponent<AudioSource>();
 
     }
 	
@@ -74,6 +79,11 @@ public class Y_Aura : MonoBehaviour {
     {
         if(other.tag == "Field")
         rangeT = true;
+        if (soundFlg == 0)
+        {
+            sound01.PlayOneShot(sound01.clip);
+            soundFlg++;
+        }
     }
 
     //射程範囲外の時
@@ -84,6 +94,7 @@ public class Y_Aura : MonoBehaviour {
         color = spRenderer.color;
         color.a = (float)0.001;
         spRenderer.color = color;
+        soundFlg = 0;
     }
 
 }
