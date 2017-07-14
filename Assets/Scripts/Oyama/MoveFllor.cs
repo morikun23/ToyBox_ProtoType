@@ -9,6 +9,8 @@ public class MoveFllor : MonoBehaviour {
 
     public bool xMove, yMove;
 
+	public float spd_move;
+
 	// Use this for initialization
 	void Start () {
         xx = transform.position.x;
@@ -23,18 +25,18 @@ public class MoveFllor : MonoBehaviour {
 
         if(xMove && yMove)
         {
-            transform.position = new Vector2(xx + Mathf.PingPong(Time.time + 1, moveLimit), yy + Mathf.PingPong(Time.time + 1, moveLimit));
+			transform.position = new Vector2(xx + Mathf.PingPong(Time.time * spd_move + 1, moveLimit), yy + Mathf.PingPong(Time.time * spd_move + 1, moveLimit));
 
         }
         else
         {
             if (xMove)
             {
-                transform.position = new Vector2(xx + Mathf.PingPong(Time.time + 1, moveLimit), yy);
+				transform.position = new Vector2(xx + Mathf.PingPong(Time.time * spd_move + 1, moveLimit), yy);
             }
             else if (yMove)
             {
-                transform.position = new Vector2(xx, yy + Mathf.PingPong(Time.time + 1, moveLimit));
+				transform.position = new Vector2(xx, yy + Mathf.PingPong(Time.time * spd_move + 1, moveLimit));
             }
             
         }
