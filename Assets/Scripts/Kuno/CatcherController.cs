@@ -141,7 +141,6 @@ public class CatcherController : MonoBehaviour {
 
 	//前方へ進行する
 	void AddPosition(){
-		TimeManager.m_num_timeScale = 0.1f;
 		scr_timeManager.TimeStop ();
 
 		transform.Translate(spd_expansion * Time.unscaledDeltaTime,0,0);
@@ -158,7 +157,7 @@ public class CatcherController : MonoBehaviour {
 
 	void HitApproachBlock(){
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-		scr_playerMove.enu_status = PlayerMove.Status.WireConnected;
+		scr_playerMove.enu_status = PlayerMove.Status.WireFaced;
 
 		GameObject baf_player = scr_playerMove.gameObject;
 		com_rigidbody.isKinematic = false;
@@ -179,12 +178,14 @@ public class CatcherController : MonoBehaviour {
 
 	void HitPullBlock(){
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+		scr_playerMove.enu_status = PlayerMove.Status.WirePulled;
 		enu_status = Status.Cancel;
 	}
 
 	void HitStayBlock(){
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-		scr_playerMove.enu_status = PlayerMove.Status.WireConnected;
+		scr_playerMove.enu_status = PlayerMove.Status.WireWated;
+		scr_timeManager.TimeStart();
 		if (!flg_stay) {
 			flg_stay = true;
 			//コライダーを作る
@@ -209,6 +210,7 @@ public class CatcherController : MonoBehaviour {
 		com_rigidbody.isKinematic = false;
 		transform.Translate(-spd_expansion * Time.unscaledDeltaTime,0,0);
 		num_distance -= spd_expansion;
+		scr_playerMove.enu_status = PlayerMove.Status.WireCollected;
 
 		if(num_distance < 0){
 			
@@ -220,7 +222,6 @@ public class CatcherController : MonoBehaviour {
 			} else {
 				scr_playerMove.enu_status = PlayerMove.Status.Neutoral;
 			}
-			TimeManager.m_num_timeScale = 1;
 			scr_timeManager.TimeStart();
 			Destroy (gameObject);
 		}

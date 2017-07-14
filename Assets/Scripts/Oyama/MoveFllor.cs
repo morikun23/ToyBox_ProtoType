@@ -18,6 +18,9 @@ public class MoveFllor : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (TimeManager.enu_status == TimeManager.Status.stop)
+			return;
+
         if(xMove && yMove)
         {
             transform.position = new Vector2(xx + Mathf.PingPong(Time.time + 1, moveLimit), yy + Mathf.PingPong(Time.time + 1, moveLimit));

@@ -14,6 +14,10 @@ public class Button : Y_Swipe
     public Sprite OnButton;     //赤いボタン(ON)
     public Sprite OffButton;    //青いボタン(OFF)
 
+    private AudioSource Button_SE; //ボタンのSE
+
+   
+      
 
     // Rayの当たったオブジェクトの情報を格納する
     RaycastHit hit = new RaycastHit();
@@ -56,17 +60,15 @@ public class Button : Y_Swipe
     void StandBy() {
         SpriteButton = gameObject.GetComponent<Image>();
 
+        //SEのデータ取得
+        Button_SE = GetComponent<AudioSource>();
+
     }
     
-    /*public override void Started()
+    public override void Started()
     {
-        StandBy();
-        click_flg = true;
-        //クリックされてる時ONにチェンジ
-        SpriteButton.sprite = OnButton;
-        Debug.Log("最初のタッチ=" + click_flg);
-
-    }*/
+        Button_SE.PlayOneShot(Button_SE.clip);
+    }
     public override void TouchE()
     {
         StandBy();
