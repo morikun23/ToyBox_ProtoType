@@ -23,16 +23,16 @@ public class StateText : MonoBehaviour {
         switch (player_state)
         {
             case State.Newtral:
-                text.text = "たってる";
+                text.text = "「とぶ」";
                 break;
             case State.Jump:
-                text.text = "ジャンプ";
+                text.text = "「待機」";
                 break;
             case State.Motsu:
-                text.text = "もってる";
+                text.text = "「おろす」";
                 break;
             case State.Bura:
-                text.text = "ぶらさがってる";
+                text.text = "「おりる」";
                 break;
         }
 
