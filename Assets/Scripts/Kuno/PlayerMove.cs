@@ -15,8 +15,11 @@ public class PlayerMove : MonoBehaviour {
 	public enum Status{
 		Neutoral,
 		WireShoted,
-		WireConnected,
-		BoxCarry
+		WireFaced,
+		WirePulled,
+		WireWated,
+		WireCollected,
+		BoxCarry,
 	}
 
 	public Status enu_status;
@@ -60,7 +63,16 @@ public class PlayerMove : MonoBehaviour {
 		case Status.WireShoted:
 			WireShoted ();
 			break;
-		case Status.WireConnected:
+		case Status.WirePulled:
+			ConnectedMove ();
+			break;
+		case Status.WireFaced:
+			ConnectedMove ();
+			break;
+		case Status.WireWated:
+			ConnectedMove ();
+			break;
+		case Status.WireCollected:
 			ConnectedMove ();
 			break;
 		case Status.BoxCarry:

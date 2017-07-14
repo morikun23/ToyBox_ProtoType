@@ -22,6 +22,9 @@ public class MoveBarAndButton : MonoBehaviour {
 
 	private bool flg_push;
 
+	Vector2 num_velocity;
+	bool flg_stop = false;
+
 	enum Status{
 		Newtoral,
 		BlockCome,
@@ -38,6 +41,19 @@ public class MoveBarAndButton : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (TimeManager.enu_status != TimeManager.Status.stop) {
+			if (flg_stop) {
+				com_rigidbody.constraints = RigidbodyConstraints2D.None;
+				com_rigidbody.velocity = num_velocity;
+				flg_stop = false;
+			}
+		} else {
+			if (!flg_stop) {
+				flg_stop = true;
+				num_velocity = com_rigidbody.velocity;
+				com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+			}
+		}
 
 		switch (com_boxClliderButton.IsTouchingLayers()) {	
 		case false:

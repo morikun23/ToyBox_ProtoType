@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour {
 
-	[Range(0,2)]
+	[Range(0.1f,2)]
 	static public float m_num_timeScale = 1;
 
 	public enum Status{
@@ -30,10 +30,9 @@ public class TimeManager : MonoBehaviour {
 		Time.timeScale = m_num_timeScale;
 		Time.fixedDeltaTime = m_num_timeScale * 0.02f;
 
-		if (m_num_timeScale != 1) {
-			if(flg_stop == true){
-				enu_status = Status.stop;
-			}
+		if(flg_stop == true){
+			enu_status = Status.stop;
+		}else if (m_num_timeScale != 1) {
 			enu_status = Status.slow;
 		} else {
 			enu_status = Status.neutoral;

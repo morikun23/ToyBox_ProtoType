@@ -18,15 +18,15 @@ public class Generate : MonoBehaviour {
 
     IEnumerator generate()
     {
-
-        
-        while (true)
-        {
-            // 毎フレームループします
-            yield return new WaitForSeconds(2.0f);
-            GameObject inst = Instantiate(ball, transform.position, Quaternion.identity);
-            Destroy(inst, 5f);
-        }
+		
+		while (true) {
+			// 毎フレームループします
+			yield return new WaitForSeconds (2.0f);
+			if (TimeManager.enu_status != TimeManager.Status.stop) {
+				GameObject inst = Instantiate (ball, transform.position, Quaternion.identity);
+				Destroy (inst, 5f);
+			}
+		}
         
     }
 }
