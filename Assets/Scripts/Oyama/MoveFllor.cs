@@ -7,14 +7,31 @@ public class MoveFllor : MonoBehaviour {
     public float moveLimit;
     float xx,yy;
 
-    public bool xMove, yMove;
+    public GameObject button;
 
-	public float spd_move;
+    private BoxCollider2D boxClliderButton;
+    private SpriteRenderer buttonSpriteRenderer;
+
+    public Sprite spr_newtoralButton;
+    public Sprite spr_pushedButton;
+
+    public GameObject Floor;
+
+    //うごくかどうか
+    bool act;
+
+	public float spd_moveX,spd_moveY;
 
 	// Use this for initialization
 	void Start () {
-        xx = transform.position.x;
-        yy = transform.position.y;
+        xx = Floor.transform.position.x;
+        yy = Floor.transform.position.y;
+
+        act = false;
+
+        boxClliderButton = button.GetComponent<BoxCollider2D>();
+        //com_rigidbody = block.GetComponent<Rigidbody2D>();
+        buttonSpriteRenderer = button.GetComponent<SpriteRenderer>();
     }
 	
 	// Update is called once per frame
@@ -23,23 +40,20 @@ public class MoveFllor : MonoBehaviour {
 		if (TimeManager.enu_status == TimeManager.Status.stop)
 			return;
 
-        if(xMove && yMove)
-        {
-			transform.position = new Vector2(xx + Mathf.PingPong(Time.time * spd_move + 1, moveLimit), yy + Mathf.PingPong(Time.time * spd_move + 1, moveLimit));
+        if(act)
+            Floor.transform.position = new Vector2(xx + Mathf.PingPong(Time.time * spd_moveX, moveLimit), yy + Mathf.PingPong(Time.time * spd_moveY, moveLimit));
 
-        }
-        else
+        if(boxClliderButton.IsTouchingLayers())
         {
-            if (xMove)
-            {
-				transform.position = new Vector2(xx + Mathf.PingPong(Time.time * spd_move + 1, moveLimit), yy);
-            }
-            else if (yMove)
-            {
-				transform.position = new Vector2(xx, yy + Mathf.PingPong(Time.time * spd_move + 1, moveLimit));
-            }
-            
-        }
 
-	}
+            buttonSpriteRenderer.sprite = spr_pushedButton;
+            act = true;
+        }
+    }
+
+    //うごけ
+    public void Action()
+    {
+        act = true;
+    }
 }
