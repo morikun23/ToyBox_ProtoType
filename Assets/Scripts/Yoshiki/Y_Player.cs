@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Y_Player : Y_Lever
+public class Y_Player : Y_Swipe
 {
 
     //移動量

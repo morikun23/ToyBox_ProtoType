@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GimmickBase : Y_Swipe {
+public class GimmickBase : K_Swipe {
 
 	public bool flg_isApproach;
 

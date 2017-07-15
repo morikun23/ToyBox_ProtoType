@@ -47,6 +47,13 @@ public class PlayerMove : MonoBehaviour {
 
 	public TimeManager scr_timeManager;
 
+
+	//値を変動させるためのバッファ用変数定義
+	private Rigidbody2D baf_rigidbody;
+	private float baf_x;
+	private float baf_y;
+	public bool flg_air;
+
 	// Use this for initialization
 	void Start () {
 		com_rigidBody = GetComponent<Rigidbody2D> ();
@@ -99,11 +106,9 @@ public class PlayerMove : MonoBehaviour {
 	}
 
 	void NeutoralMove(){
-		//値を変動させるためのバッファ用変数定義
-		Rigidbody2D baf_rigidbody = GetComponent<Rigidbody2D> ();
-
-		float baf_x = 0;
-		float baf_y = baf_rigidbody.velocity.y;
+		baf_rigidbody = GetComponent<Rigidbody2D> ();
+		baf_x = 0;
+		baf_y = baf_rigidbody.velocity.y;
 
 		if (baf_rigidbody.constraints == RigidbodyConstraints2D.FreezeAll) {
 			baf_y = num_velocityY;
@@ -115,34 +120,43 @@ public class PlayerMove : MonoBehaviour {
 		if (RayCast (Vector3.down)) {
 			col_object.sharedMaterial = phy_neutoral;
             m_anime.SetBool("JumpFlag", false);
+			flg_air = false;
         } else {
 			col_object.sharedMaterial = phy_move;
-            
+			flg_air = true;
         }
+	}
 
+	public void Run(int axis){
 		//矢印キーで移動
-		if (Input.GetButton ("Horizontal")) {
-			baf_x = Input.GetAxis ("Horizontal") * spd_move;
-			if (Input.GetAxis ("Horizontal") >= 0) {
-				GetComponent<SpriteRenderer> ().flipX = true;
-			} else {
-				GetComponent<SpriteRenderer> ().flipX = false;
-			}
-            m_anime.SetBool("RunFlag", true);
-            AddPositionX (baf_x);
-		} else {
-            //baf_x = 0;
-            m_anime.SetBool("RunFlag", false);
-        }
+		//if (Input.GetButton ("Horizontal")) {
 
-		if (Input.GetButtonDown ("Vertical")) {
+		if (enu_status != Status.Neutoral && enu_status != Status.BoxCarry)
+			return;
+
+		baf_x = axis * spd_move;
+		if (axis >= 0) {
+			GetComponent<SpriteRenderer> ().flipX = true;
+		} else {
+			GetComponent<SpriteRenderer> ().flipX = false;
+		}
+		m_anime.SetBool("RunFlag", true);
+		AddPositionX (baf_x);
+	//} else {
+		//baf_x = 0;
+		m_anime.SetBool("RunFlag", false);
+	//}
+	}
+
+	public void Jump(){
+		if (enu_status != Status.Neutoral)
+			return;
+		//if (Input.GetButtonDown ("Vertical")) {
 			baf_y = spd_jump;
 			AddPositionY (baf_y);
-            m_anime.SetBool("RunFlag", false);
-            m_anime.SetBool("JumpFlag", true);
-        }
-
-
+			m_anime.SetBool("RunFlag", false);
+			m_anime.SetBool("JumpFlag", true);
+		//}
 	}
 
 	void ConnectedMove(){
@@ -171,39 +185,18 @@ public class PlayerMove : MonoBehaviour {
 		} else {
 			col_object.sharedMaterial = phy_move;
 		}
-
-        //矢印キーで移動
-        if (Input.GetButton("Horizontal"))
-        {
-            baf_x = Input.GetAxis("Horizontal") * spd_move;
-            if (Input.GetAxis("Horizontal") >= 0)
-            {
-                GetComponent<SpriteRenderer>().flipX = true;
-            }
-            else {
-                GetComponent<SpriteRenderer>().flipX = false;
-            }
-            AddPositionX(baf_x);
-            m_anime.SetBool("HoldRunFlag", true);
-        }
-        else {
-            m_anime.SetBool("HoldRunFlag", false);
-        }
-
-		if (Input.GetButtonDown ("Vertical")) {
-			baf_y = spd_jump / 2;
-			AddPositionY (baf_y);
-		}
-
-		//クリックで持っているブロックを置き、ニュートラルに戻る
-		if(Input.GetKeyDown(KeyCode.Mouse0)){
-			scr_pullBlock.RemoveParent ();
-            m_anime.SetBool("HoldFlag", false);
-            m_anime.SetBool("HoldRunFlag", false);
-            enu_status = Status.Neutoral;
-		}
+			
 	}
 
+	public void SetBox(){
+		//クリックで持っているブロックを置き、ニュートラルに戻る
+		//if(Input.GetKeyDown(KeyCode.Mouse0)){
+			scr_pullBlock.RemoveParent ();
+			m_anime.SetBool("HoldFlag", false);
+			m_anime.SetBool("HoldRunFlag", false);
+			enu_status = Status.Neutoral;
+		//}
+	}
 
 	public void ShotWire(Vector3 objPos){
 		if (flg_shoted)
@@ -237,14 +230,14 @@ public class PlayerMove : MonoBehaviour {
 
 		Vector3 baf_vec = new Vector3 (m_pos_point.x + m_num_sprWidth / 2,m_pos_point.y,0);
 		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
-		int layerMask = 1 << LayerMask.NameToLayer ("Ground");
+		int layerMask = 1 << LayerMask.NameToLayer ("Ground") | 1 << LayerMask.NameToLayer ("BlockToPlayer");
 		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth + 0.01f / 2,layerMask)){
 			return true;
 		}
 
 		baf_vec = new Vector3 (m_pos_point.x - m_num_sprWidth / 2,m_pos_point.y,0);
 		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
-		layerMask = 1 << LayerMask.NameToLayer ("Ground");
+		layerMask = 1 << LayerMask.NameToLayer ("Ground") | 1 << LayerMask.NameToLayer ("BlockToPlayer");
 		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth / 2,layerMask)){
 			return true;
 		}

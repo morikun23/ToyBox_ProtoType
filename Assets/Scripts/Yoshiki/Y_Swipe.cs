@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Y_Swipe : MonoBehaviour {
 
@@ -38,8 +39,16 @@ public class Y_Swipe : MonoBehaviour {
     public void Start()
     {
         //サイズの取得
-        size = gameObject.transform.localScale;
-    }
+		if (GetComponent<BoxCollider2D> ()) {
+			size = GetComponent<BoxCollider2D>().bounds.size;
+
+		} else if(GetComponent<CircleCollider2D> ()){
+			size = GetComponent<CircleCollider2D>().bounds.size;
+
+		}else if(GetComponent<SpriteRenderer>()){
+			size = GetComponent<SpriteRenderer> ().bounds.size;
+		}
+	}
 
     public void Update()
     {
@@ -52,65 +61,70 @@ public class Y_Swipe : MonoBehaviour {
         //オブジェクト位置取得
         position = gameObject.transform.position;
 
+		foreach (Touch t in Input.touches) {
+			// マウス位置座標を取得する
+			changeToPos = t.position;
+			// Z軸修正
+			changeToPos.z = 10f;
+			// マウス位置座標をスクリーン座標からワールド座標に変換する
+			touchNowPos = Camera.main.ScreenToWorldPoint(changeToPos);
 
-        // マウス位置座標を取得する
-        changeToPos = Input.mousePosition;
-        // Z軸修正
-        changeToPos.z = 10f;
-        // マウス位置座標をスクリーン座標からワールド座標に変換する
-        touchNowPos = Camera.main.ScreenToWorldPoint(changeToPos);
+			//範囲内にマウスがいるか判定
+			if (touchNowPos.x <= position.x + size.x  && touchNowPos.x >= position.x - size.y &&
+				touchNowPos.y <= position.y + size.y  && touchNowPos.y >= position.y - size.y )
+			{
+				//タッチ
+				if (t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary)
+				{
+					//位置取得
+					touchStartPos = position;
 
-        //範囲内にマウスがいるか判定
-        if (touchNowPos.x <= position.x + size.x  && touchNowPos.x >= position.x - size.y &&
-            touchNowPos.y <= position.y + size.y  && touchNowPos.y >= position.y - size.y )
-        {
-            //タッチ
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                //位置取得
-                touchStartPos = position;
+					move = true;
 
-                move = true;
+					//開始
+					Started();
 
-                //開始
-                Started();
-            }
-            //指を離す
-            if (Input.GetKeyUp(KeyCode.Mouse0))
-            {
-                move = false;
+				}
+				//指を離す
+				if (t.phase == TouchPhase.Ended)
+				{
+					move = false;
 
-                if (swipeFlg)
-                {
-                    //スワイプ終了
-                    SwipeE();
-                }
-                else
-                {
-                    //タッチ終了
-                    TouchE();
-                }
-                swipeFlg = false;
+					if (swipeFlg)
+					{
+						//スワイプ終了
+						SwipeE();
+					}
+					else
+					{
+						//タッチ終了
+						TouchE();
+					}
+					swipeFlg = false;
 
-            }
+				}
+				break;
+			}
+//			else if (Input.GetKeyUp(KeyCode.Mouse0) && swipeFlg)
+//			{
+//				move = false;
+//
+//				//スワイプ終了
+//				SwipeE();
+//
+//				//初期化
+//				swipeFlg = false;
+//
+//			}
+
+			//アクション
+			if (move)
+				Move();
+
+			//break;
+		}
 
 
-        }
-        else if (Input.GetKeyUp(KeyCode.Mouse0) && swipeFlg)
-        {
-            move = false;
-
-            //スワイプ終了
-            SwipeE();
-
-            //初期化
-            swipeFlg = false;
-            
-        }
-
-        //アクション
-        if (move)
-            Move();
     }
 
     void Move()
