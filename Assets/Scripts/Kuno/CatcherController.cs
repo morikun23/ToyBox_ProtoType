@@ -27,6 +27,7 @@ public class CatcherController : MonoBehaviour {
 	GameObject obj_player;
 
 	bool flg_stay = false;
+	public bool flg_waitDestroy = false;
 
 	//状態管理用enum
 	public enum Status{
@@ -156,23 +157,24 @@ public class CatcherController : MonoBehaviour {
 	}
 
 	void HitApproachBlock(){
-		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-		scr_playerMove.enu_status = PlayerMove.Status.WireFaced;
 
-		GameObject baf_player = scr_playerMove.gameObject;
-		com_rigidbody.isKinematic = false;
+		if (num_distance < 0.3f) {
+			flg_waitDestroy = true;
+		} else {
+			com_rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+			scr_playerMove.enu_status = PlayerMove.Status.WireFaced;
 
-		float baf_atan = Mathf.Atan2 (transform.position.y - scr_playerMove.transform.position.y,transform.position.x - scr_playerMove.transform.position.x);
-		//baf_atan = Mathf.Rad2Deg * baf_atan;
+			GameObject baf_player = scr_playerMove.gameObject;
+			com_rigidbody.isKinematic = false;
 
-		float baf_cos = Mathf.Cos (baf_atan) * spd_expansion * Time.unscaledDeltaTime;
-		float baf_sin = Mathf.Sin (baf_atan) * spd_expansion * Time.unscaledDeltaTime;
-		baf_player.transform.Translate(baf_cos,baf_sin,0);
+			float baf_atan = Mathf.Atan2 (transform.position.y - scr_playerMove.transform.position.y,transform.position.x - scr_playerMove.transform.position.x);
+			//baf_atan = Mathf.Rad2Deg * baf_atan;
 
-		num_distance -= spd_expansion;
+			float baf_cos = Mathf.Cos (baf_atan) * spd_expansion * Time.unscaledDeltaTime;
+			float baf_sin = Mathf.Sin (baf_atan) * spd_expansion * Time.unscaledDeltaTime;
+			baf_player.transform.Translate(baf_cos,baf_sin,0);
 
-		if(num_distance < 0.3f){
-			enu_status = Status.HitStayBlock;
+			num_distance -= spd_expansion;
 		}
 	}
 
@@ -195,10 +197,8 @@ public class CatcherController : MonoBehaviour {
 			obj_armCollider.transform.localScale = new Vector3 (obj_armCollider.transform.localScale.x, (obj_player.transform.position - obj_armCollider.transform.position).magnitude * 2, obj_armCollider.transform.localScale.z);
 		}
 
-		if(Input.GetKeyDown(KeyCode.Mouse0)){
-			Destroy (obj_armCollider);
-			enu_status = Status.Cancel;
-		}
+		flg_waitDestroy = true;
+
 	}
 
 	void HitNomalBlock(){
@@ -227,8 +227,9 @@ public class CatcherController : MonoBehaviour {
 		}
 	}
 
-	void Break(){
-		
+	public void BreakCollider(){
+		Destroy (obj_armCollider);
+		enu_status = Status.Cancel;
 	}
 
 }
