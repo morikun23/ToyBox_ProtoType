@@ -42,19 +42,21 @@ public class RappidBlock : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
+		if (TimeManager.enu_status != TimeManager.Status.stop) {
+			block.transform.position = new Vector3 (xx + Mathf.PingPong (Time.time * moveAdd, max_distance), yy, 0);
+		}
 
-        block.transform.position = new Vector3(xx + Mathf.PingPong(Time.time * moveAdd, max_distance), yy, 0);
+	    if (boxClliderButton.IsTouchingLayers(1 << LayerMask.NameToLayer("Catcher")) && buttonSpriteRenderer.sprite == spr_newtoralButton)
+	    {
+	        GameObject sound2 = new GameObject("Sound");
+	        sound2.AddComponent<AudioSource>().clip = s_button;
+	        sound2.GetComponent<AudioSource>().Play();
 
-        if (boxClliderButton.IsTouchingLayers(1 << LayerMask.NameToLayer("Catcher")) && buttonSpriteRenderer.sprite == spr_newtoralButton)
-        {
-            GameObject sound2 = new GameObject("Sound");
-            sound2.AddComponent<AudioSource>().clip = s_button;
-            sound2.GetComponent<AudioSource>().Play();
-
-            GameObject a_ball = Instantiate(ball, ballPoint.transform.position, Quaternion.identity);
-            Destroy(a_ball, 5);
-            buttonSpriteRenderer.sprite = spr_pushedButton;
-            
-        }
+	        GameObject a_ball = Instantiate(ball, ballPoint.transform.position, Quaternion.identity);
+	        Destroy(a_ball, 5);
+	        buttonSpriteRenderer.sprite = spr_pushedButton;
+	        
+	    }
+		
     }
 }

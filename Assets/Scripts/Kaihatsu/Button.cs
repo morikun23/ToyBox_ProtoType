@@ -8,6 +8,8 @@ public class Button : K_Swipe
 
 
     bool click_flg = false; //ボタンがクリックされているか
+	int cnt_click;
+
     bool isBotton;
    Image SpriteButton;
 
@@ -67,11 +69,12 @@ public class Button : K_Swipe
     
     public override void Started()
     {
-        //Button_SE.PlayOneShot(Button_SE.clip);
+		click_flg = true;
     }
     public override void TouchE()
     {
         StandBy();
+		click_flg = false;
 
 		if (scr_playerMove.enu_status == PlayerMove.Status.BoxCarry) {
 			scr_playerMove.SetBox ();
@@ -84,6 +87,7 @@ public class Button : K_Swipe
 			scr_playerMove.Jump ();
 			return;
 		}
+
 
 //        if (click_flg == false)
 //        {
@@ -104,11 +108,32 @@ public class Button : K_Swipe
     }
     public override void SwipeE()
     {
+		click_flg = false;
+
 //        StandBy();
 //        click_flg = false;
 //        //Offにチェンジ
 //        SpriteButton.sprite = OffButton;
     }  
+
+	public void Update(){
+		base.Update ();
+
+		if (click_flg) {
+			cnt_click++;
+		} else {
+			cnt_click = 0;
+		}
+
+		if (cnt_click > 30) {
+			TimeManager.m_num_timeScale = 0.1f;
+		} else {
+			TimeManager.m_num_timeScale = 1;
+			cnt_click++;
+		}
+
+
+	}
 }
 
 

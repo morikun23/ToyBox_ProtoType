@@ -65,7 +65,7 @@ public class PlayerMove : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
 		switch (enu_status) {
 		case Status.Neutoral:
@@ -132,6 +132,8 @@ public class PlayerMove : MonoBehaviour {
 		//if (Input.GetButton ("Horizontal")) {
 
 		if (enu_status != Status.Neutoral && enu_status != Status.BoxCarry)
+			return;
+		if (CheckWall (new Vector2(axis,0)))
 			return;
 
 		baf_x = axis * spd_move;
@@ -228,19 +230,31 @@ public class PlayerMove : MonoBehaviour {
 
 	bool RayCast(Vector2 arg_direction){
 
-		Vector3 baf_vec = new Vector3 (m_pos_point.x + m_num_sprWidth / 2,m_pos_point.y,0);
+		Vector3 baf_vec = new Vector3 (m_pos_point.x + m_num_sprWidth - 0.06f,m_pos_point.y,0);
 		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
 		int layerMask = 1 << LayerMask.NameToLayer ("Ground") | 1 << LayerMask.NameToLayer ("BlockToPlayer");
-		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth + 0.01f / 2,layerMask)){
+		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth,layerMask)){
 			return true;
 		}
 
-		baf_vec = new Vector3 (m_pos_point.x - m_num_sprWidth / 2,m_pos_point.y,0);
+		baf_vec = new Vector3 (m_pos_point.x - m_num_sprWidth + 0.06f,m_pos_point.y,0);
 		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
 		layerMask = 1 << LayerMask.NameToLayer ("Ground") | 1 << LayerMask.NameToLayer ("BlockToPlayer");
-		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth / 2,layerMask)){
+		if (Physics2D.Raycast (baf_vec, arg_direction, m_num_sprWidth,layerMask)){
 			return true;
 		}
+			
+		return false;
+	}
+
+	bool CheckWall(Vector2 arg_direction){
+		Vector3 baf_vec = new Vector3 (m_pos_point.x + arg_direction.x * m_num_sprWidth,m_pos_point.y - m_num_sprWidth / 2,0);
+		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
+		int layerMask = 1 << LayerMask.NameToLayer ("Ground") | 1 << LayerMask.NameToLayer ("BlockToPlayer");
+		if (Physics2D.Raycast (baf_vec, arg_direction, baf_x,layerMask)){
+			return true;
+		}
+
 		return false;
 	}
 }

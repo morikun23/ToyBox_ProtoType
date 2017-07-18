@@ -123,7 +123,7 @@ public class K_Swipe : MonoBehaviour {
 		float baf_rotNew = Vector2.Angle(baf_pos,Camera.main.WorldToScreenPoint (pos_input [i]));
 
 		if (gameObject.name == "レバー") {
-			Debug.Log (baf_rotNew - baf_rotBef);
+			//Debug.Log (baf_rotNew - baf_rotBef);
 		}
 
 		if(baf_rotNew - baf_rotBef > 3){
