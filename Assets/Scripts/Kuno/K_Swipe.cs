@@ -119,17 +119,17 @@ public class K_Swipe : MonoBehaviour {
 
 	void CheckRotate(Touch t,int i){
 		Vector2 baf_pos = Camera.main.WorldToScreenPoint(pos_rotatePoint.position);
-		float baf_rotBef = Mathf.Atan2 (baf_pos.y - Camera.main.WorldToScreenPoint(pos_inputBefore[i]).y,
-			baf_pos.x - Camera.main.WorldToScreenPoint(pos_inputBefore[i]).x) * Mathf.Rad2Deg;
-		float baf_rotNew = Mathf.Atan2 (baf_pos.y - Camera.main.WorldToScreenPoint(pos_input[i]).y + (pos_screenNew.y - pos_screenBefore.y),
-			baf_pos.x - Camera.main.WorldToScreenPoint(pos_inputBefore[i]).x) * Mathf.Rad2Deg;
+		float baf_rotBef = Vector2.Angle(baf_pos,Camera.main.WorldToScreenPoint (pos_inputBefore [i]));
+		float baf_rotNew = Vector2.Angle(baf_pos,Camera.main.WorldToScreenPoint (pos_input [i]));
 
+		if (gameObject.name == "レバー") {
+			Debug.Log (baf_rotNew - baf_rotBef);
+		}
 
-
-		if(baf_rotNew - baf_rotBef > 2){
+		if(baf_rotNew - baf_rotBef > 3){
 			num_rotateDirection[i] = 1;
 		}
-		else if(baf_rotNew - baf_rotBef < -2){
+		else if(baf_rotNew - baf_rotBef < -3){
 			num_rotateDirection[i] = -1;
 		}
 	}
