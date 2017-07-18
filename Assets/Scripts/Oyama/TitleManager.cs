@@ -27,6 +27,8 @@ public class TitleManager : MonoBehaviour {
 
     bool next;
 
+    public AudioClip sound;
+
     // Use this for initialization
     void Start () {
         m_filter.color = new Color(1, 1, 1, 0);
@@ -46,11 +48,16 @@ public class TitleManager : MonoBehaviour {
             Application.LoadLevel(1);
         }
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            AudioSource.PlayClipAtPoint(sound, Camera.main.gameObject.transform.position);
+            next = true;
+        }
         if (Input.touchCount < 1) return;
         if (Input.GetTouch(0).phase == TouchPhase.Began && next == false)
         {
             //シーン移動したい
-            
+            AudioSource.PlayClipAtPoint(sound, Camera.main.gameObject.transform.position);
             next = true;
             Debug.Log("in");
         }

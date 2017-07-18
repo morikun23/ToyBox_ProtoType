@@ -22,10 +22,13 @@ public class ResultManager : MonoBehaviour {
 
         if (m_filter.color.a > 0) m_filter.color -= new Color(0, 0, 0, m_alphaNum);
 
+        if(m_filter.color.a <= 0 && Input.GetKeyDown(KeyCode.Space)) Application.LoadLevel(0);
+
         if (Input.touchCount < 1) return;
-        if(Input.GetTouch(0).phase == TouchPhase.Began)
+        if(m_filter.color.a <= 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             //シーン移動したい
+            Application.LoadLevel(0);
         }
 
 	}

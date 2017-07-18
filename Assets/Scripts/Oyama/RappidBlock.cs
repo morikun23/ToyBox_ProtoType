@@ -20,6 +20,8 @@ public class RappidBlock : MonoBehaviour {
     public Sprite spr_newtoralButton;
     public Sprite spr_pushedButton;
 
+    public AudioClip s_button;
+
     //加速量
     public float moveAdd = 9;
 
@@ -45,6 +47,10 @@ public class RappidBlock : MonoBehaviour {
 
         if (boxClliderButton.IsTouchingLayers(1 << LayerMask.NameToLayer("Catcher")) && buttonSpriteRenderer.sprite == spr_newtoralButton)
         {
+            GameObject sound2 = new GameObject("Sound");
+            sound2.AddComponent<AudioSource>().clip = s_button;
+            sound2.GetComponent<AudioSource>().Play();
+
             GameObject a_ball = Instantiate(ball, ballPoint.transform.position, Quaternion.identity);
             Destroy(a_ball, 5);
             buttonSpriteRenderer.sprite = spr_pushedButton;
