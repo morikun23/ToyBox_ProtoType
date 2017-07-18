@@ -35,6 +35,11 @@ public class Ball : MonoBehaviour {
         {
             Destroy(gameObject);
 
+            GameObject sound2 = new GameObject("Sound");
+            sound2.AddComponent<AudioSource>().clip = Resources.Load<AudioClip>("Sounds/SE/SE_BreakWall");
+            sound2.AddComponent<AudioSource>().spatialBlend = 1;
+            sound2.GetComponent<AudioSource>().Play();
+
             foreach (Transform child in other.gameObject.transform)
             {
                 child.transform.GetComponent<Animator>().enabled = true;
