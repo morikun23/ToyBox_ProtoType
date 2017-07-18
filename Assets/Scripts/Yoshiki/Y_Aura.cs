@@ -34,7 +34,7 @@ public class Y_Aura : MonoBehaviour {
         transform.localScale = new Vector3(1.16f, 1.16f, 1);
         transform.localEulerAngles = new Vector3(0, 0, 0);
         sound01 = GetComponent<AudioSource>();
-
+        
     }
 	
 	// Update is called once per frame
