@@ -9,6 +9,7 @@ public class Button : K_Swipe
 
     bool click_flg = false; //ボタンがクリックされているか
 	int cnt_click;
+	bool flg_slow;
 
     bool isBotton;
    Image SpriteButton;
@@ -75,23 +76,32 @@ public class Button : K_Swipe
     public override void TouchE()
     {
         StandBy();
-		click_flg = false;
+
 
         Button_SE.Play();
+		click_flg = false;
 
-
-        if (scr_playerMove.enu_status == PlayerMove.Status.BoxCarry) {
-			scr_playerMove.SetBox ();
-		}else if(GameObject.Find("Catcher003(Clone)")){
-			GameObject baf_obj = GameObject.Find ("Catcher003(Clone)");
-			if (baf_obj.GetComponent<CatcherController> ().flg_waitDestroy) {
-				baf_obj.GetComponent<CatcherController> ().BreakCollider ();
+		if (!flg_slow) {
+			if (scr_playerMove.enu_status == PlayerMove.Status.BoxCarry) {
+				scr_playerMove.SetBox ();
+			} else if (GameObject.Find ("Catcher003(Clone)")) {
+				GameObject baf_obj = GameObject.Find ("Catcher003(Clone)");
+				if (baf_obj.GetComponent<CatcherController> ().flg_waitDestroy) {
+					baf_obj.GetComponent<CatcherController> ().BreakCollider ();
+				}
+			} else if (!scr_playerMove.flg_air) {
+				scr_playerMove.Jump ();
+				return;
 			}
-		}else if(!scr_playerMove.flg_air){
-			scr_playerMove.Jump ();
-			return;
-		}
+		} else {
+			if (TimeManager.enu_status != TimeManager.Status.slow) {
+				TimeManager.m_num_timeScale = 0.1f;
+			} else {
+				flg_slow = false;
+				TimeManager.m_num_timeScale = 1f;
+			}
 
+		}
 
 //        if (click_flg == false)
 //        {
@@ -127,22 +137,18 @@ public class Button : K_Swipe
         SpriteButton = gameObject.GetComponent<Image>();
 
         if (click_flg) {
-            SpriteButton.sprite = OnButton;
+            //SpriteButton.sprite = OnButton;
             cnt_click++;
 		} else {
-            SpriteButton.sprite = OffButton;
+            //SpriteButton.sprite = OffButton;
             cnt_click = 0;
 		}
 
+		if (cnt_click == 30 && click_flg) {
+			flg_slow = true;
+		}
 
-        if (cnt_click > 30)
-        {
-            TimeManager.m_num_timeScale = 0.1f;
-        }
-        else {
-            TimeManager.m_num_timeScale = 1;
-            cnt_click++;
-        }
+		Debug.Log (cnt_click);
     }
 }
 
