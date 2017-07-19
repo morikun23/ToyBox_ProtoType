@@ -23,25 +23,29 @@ public class StateText : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		switch (scr_playerMove.enu_status)
-        {
-		case PlayerMove.Status.Neutoral:
-			if (!scr_playerMove.flg_air) {
-				text.text = "「とぶ」";
-			} else {
-				text.text = "";
+		if (TimeManager.enu_status == TimeManager.Status.slow) {
+			text.text = "「もどす」";
+		} else {
+
+			switch (scr_playerMove.enu_status) {
+			case PlayerMove.Status.Neutoral:
+				if (!scr_playerMove.flg_air) {
+					text.text = "「とぶ」";
+				} else {
+					text.text = "";
+				}
+				break;
+			case PlayerMove.Status.BoxCarry:
+				text.text = "「おろす」";
+				break;
+			case PlayerMove.Status.WireWated:
+				text.text = "「はなす」";
+				break;
+			case PlayerMove.Status.WireFaced:
+				text.text = "「おりる」";
+				break;
 			}
-            break;
-		case PlayerMove.Status.BoxCarry:
-            text.text = "「おろす」";
-            break;
-		case PlayerMove.Status.WireWated:
-			text.text = "「はなす」";
-			break;
-		case PlayerMove.Status.WireFaced:
-            text.text = "「おりる」";
-            break;
-        }
+		}
 
     }
 
