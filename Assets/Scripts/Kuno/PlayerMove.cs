@@ -136,8 +136,10 @@ public class PlayerMove : MonoBehaviour {
 
 		if (enu_status != Status.Neutoral && enu_status != Status.BoxCarry)
 			return;
-		if (CheckWall (new Vector2(axis,0)))
-			return;
+        if (CheckWall(new Vector2(axis, 0)))
+        {
+             return;
+        }
 
 		baf_x = axis * spd_move;
 		if (axis >= 0) {
@@ -257,10 +259,14 @@ public class PlayerMove : MonoBehaviour {
 
 	bool CheckWall(Vector2 arg_direction){
 		Vector3 baf_vec = new Vector3 (m_pos_point.x + arg_direction.x * m_num_sprWidth,m_pos_point.y - m_num_sprWidth / 2,0);
-		Debug.DrawRay (baf_vec,arg_direction * m_num_sprWidth,Color.magenta,0.01f);
+		Debug.DrawRay (baf_vec,arg_direction,Color.magenta,0.01f);
 		int layerMask = 1 << LayerMask.NameToLayer ("Ground") | 1 << LayerMask.NameToLayer ("BlockToPlayer");
-		if (Physics2D.Raycast (baf_vec, arg_direction, baf_x,layerMask)){
-			return true;
+
+        RaycastHit2D unchi;
+
+        if (unchi = Physics2D.Raycast (baf_vec, arg_direction, baf_x * Time.deltaTime,layerMask)){
+            
+            return true;
 		}
 
 		return false;

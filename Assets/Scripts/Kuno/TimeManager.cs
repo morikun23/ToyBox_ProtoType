@@ -28,7 +28,7 @@ public class TimeManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Time.timeScale = m_num_timeScale;
-		Time.fixedDeltaTime = m_num_timeScale * 0.02f;
+        Time.fixedDeltaTime = m_num_timeScale * 0.02f;
 
 		if(flg_stop == true){
 			enu_status = Status.stop;
