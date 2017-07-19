@@ -60,7 +60,7 @@ public class Button : K_Swipe
     
 
     void StandBy() {
-        SpriteButton = gameObject.GetComponent<Image>();
+        
 
         //SEのデータ取得
         Button_SE = GetComponent<AudioSource>();
@@ -69,14 +69,18 @@ public class Button : K_Swipe
     
     public override void Started()
     {
-		click_flg = true;
+        
+        click_flg = true;
     }
     public override void TouchE()
     {
         StandBy();
 		click_flg = false;
 
-		if (scr_playerMove.enu_status == PlayerMove.Status.BoxCarry) {
+        Button_SE.Play();
+
+
+        if (scr_playerMove.enu_status == PlayerMove.Status.BoxCarry) {
 			scr_playerMove.SetBox ();
 		}else if(GameObject.Find("Catcher003(Clone)")){
 			GameObject baf_obj = GameObject.Find ("Catcher003(Clone)");
@@ -119,21 +123,27 @@ public class Button : K_Swipe
 	public void Update(){
 		base.Update ();
 
-		if (click_flg) {
-			cnt_click++;
+        if(SpriteButton == null)
+        SpriteButton = gameObject.GetComponent<Image>();
+
+        if (click_flg) {
+            SpriteButton.sprite = OnButton;
+            cnt_click++;
 		} else {
-			cnt_click = 0;
+            SpriteButton.sprite = OffButton;
+            cnt_click = 0;
 		}
 
-		if (cnt_click > 30) {
-			TimeManager.m_num_timeScale = 0.1f;
-		} else {
-			TimeManager.m_num_timeScale = 1;
-			cnt_click++;
-		}
 
-
-	}
+        if (cnt_click > 30)
+        {
+            TimeManager.m_num_timeScale = 0.1f;
+        }
+        else {
+            TimeManager.m_num_timeScale = 1;
+            cnt_click++;
+        }
+    }
 }
 
 

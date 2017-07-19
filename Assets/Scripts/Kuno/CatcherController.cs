@@ -45,8 +45,10 @@ public class CatcherController : MonoBehaviour {
 
 	public TimeManager scr_timeManager;
 
-	// Use this for initialization
-	void Start () {
+    private AudioSource Catcher_SE; //キャッチャーのSE
+
+    // Use this for initialization
+    void Start () {
 		com_rigidbody = GetComponent<Rigidbody2D> (); 
 		com_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
 
@@ -64,7 +66,10 @@ public class CatcherController : MonoBehaviour {
 		GameObject baf_obj = GameObject.Find ("TimeManager");
 		scr_timeManager = baf_obj.GetComponent<TimeManager> ();
 
-	}
+        Catcher_SE = GetComponent<AudioSource>();
+
+
+    }
 
 	// Update is called once per frame
 	void Update () {
@@ -105,7 +110,12 @@ public class CatcherController : MonoBehaviour {
 		flg_hit = true;
 		pos_contact = col.contacts [0].point;
 
-		switch (col.gameObject.tag) {
+        //最初の無音部分をキングクリムゾンします
+        Catcher_SE.time = 0.2f;
+        Catcher_SE.Play();
+
+
+        switch (col.gameObject.tag) {
 		case "ApproachBlock":
 			enu_status = Status.HitApproachBlock;
 			break;

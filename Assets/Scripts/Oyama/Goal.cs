@@ -14,14 +14,19 @@ public class Goal : MonoBehaviour {
 
     float alpha = 0.015f;
 
+    PlayerMove m_playerMove;
+
     void Start()
     {
         m_filter.color = new Color(1, 1, 1, 0);
         fade = false;
+
+        m_playerMove = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMove>();
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         Ray ray = new Ray(transform.position, Vector3.back);
         //Debug.DrawRay(ray.origin, ray.direction, Color.red, 0.1f);
@@ -30,14 +35,21 @@ public class Goal : MonoBehaviour {
 
         if (hit.collider)
         {
-            Debug.Log("goal");
 
             fade = true;
-            
+            m_playerMove.enabled = false;
 
         }
 
-        if(fade)
+        if (fade)
+        {
             m_filter.color += new Color(0, 0, 0, alpha);
+
+            if(m_filter.color.a >= 1)
+            {
+                Application.LoadLevel(2);
+            }
+
+        }
     }
 }

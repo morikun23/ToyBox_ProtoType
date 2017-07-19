@@ -119,13 +119,16 @@ public class PlayerMove : MonoBehaviour {
 		m_pos_point = m_obj_point.transform.position;
 		if (RayCast (Vector3.down)) {
 			col_object.sharedMaterial = phy_neutoral;
-            m_anime.SetBool("JumpFlag", false);
+            
 			flg_air = false;
         } else {
 			col_object.sharedMaterial = phy_move;
 			flg_air = true;
         }
-	}
+
+        m_anime.SetBool("RunFlag", false);
+        m_anime.SetBool("JumpFlag", flg_air);
+    }
 
 	public void Run(int axis){
 		//矢印キーで移動
@@ -142,11 +145,15 @@ public class PlayerMove : MonoBehaviour {
 		} else {
 			GetComponent<SpriteRenderer> ().flipX = false;
 		}
-		m_anime.SetBool("RunFlag", true);
+
+        if(enu_status == Status.BoxCarry)
+            m_anime.SetBool("HoldRunFlag", true);
+        if (enu_status == Status.Neutoral)
+            m_anime.SetBool("RunFlag", true);
 		AddPositionX (baf_x);
 	//} else {
 		//baf_x = 0;
-		m_anime.SetBool("RunFlag", false);
+		
 	//}
 	}
 
@@ -187,8 +194,9 @@ public class PlayerMove : MonoBehaviour {
 		} else {
 			col_object.sharedMaterial = phy_move;
 		}
-			
-	}
+
+        m_anime.SetBool("HoldRunFlag", false);
+    }
 
 	public void SetBox(){
 		//クリックで持っているブロックを置き、ニュートラルに戻る

@@ -36,6 +36,10 @@ public class Y_Lever : K_Swipe
 
 	public PlayerMove scr_playerMove;
 
+    public AudioClip m_leverSound; //レバーのSE
+    bool soundFlagL = false;
+    bool soundFlagR = false;
+
     public override void SwipeE()
     {
         gameObject.transform.eulerAngles = new Vector3(0, 0, 315);
@@ -47,6 +51,14 @@ public class Y_Lever : K_Swipe
 
 	public override void RightR(float dist)
     {
+
+        if (soundFlagR == false)
+        {
+            AudioSource.PlayClipAtPoint(m_leverSound, scr_playerMove.gameObject.transform.position);
+            soundFlagR = true;
+            soundFlagL = false;
+        }
+
         //指の位置がレバーの角度内なら
         if (gameObject.transform.eulerAngles.z < 360 && gameObject.transform.eulerAngles.z > 270)
             gameObject.transform.eulerAngles += new Vector3(0, 0, 5);
@@ -60,6 +72,14 @@ public class Y_Lever : K_Swipe
 
 	public override void LeftR(float dist)
     {
+        
+        if (soundFlagL == false)
+        {
+            AudioSource.PlayClipAtPoint(m_leverSound, scr_playerMove.gameObject.transform.position);
+            soundFlagL = true;
+            soundFlagR = false;
+        }
+
         //指の位置がレバーの角度内なら
         if (gameObject.transform.eulerAngles.z < 360 && gameObject.transform.eulerAngles.z > 270)
             gameObject.transform.eulerAngles += new Vector3(0, 0, -5);
