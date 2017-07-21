@@ -168,7 +168,17 @@ public class Button : K_Swipe
 
         
     }
+
+	//看板がよぶやつ
+	public void SetZero(){
+
+		cnt_click = 0;
+
+	}
+
 }
+
+
 
 
 

@@ -57,6 +57,11 @@ public class TutorialBoard : MonoBehaviour {
                 m_window.SetActive(true);
                 m_boardBaloon.SetActive(false);
            
+			if (GetComponent<BoardZeroSet>() != null) {
+			
+				GetComponent<BoardZeroSet> ().enabled = false; 
+
+			}
 
         }
         else {
