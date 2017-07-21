@@ -32,8 +32,6 @@ public class TutorialBoardManager : MonoBehaviour {
                 ii++;
             }
         }
-
-		m_boards [6].gameObject.AddComponent<BoardZeroSet> ();
         
 
         /*for(int i = 0; i < m_totalBoardCount; i++)
