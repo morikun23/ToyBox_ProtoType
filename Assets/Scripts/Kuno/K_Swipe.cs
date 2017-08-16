@@ -5,15 +5,13 @@ using UnityEngine;
 public class K_Swipe : MonoBehaviour {
 
 	Vector3[] pos_input = new Vector3[10];
-	Vector3 pos_inputScreen;
+	Vector3[] pos_inputScreen = new Vector3[10];
 	Vector3[] pos_inputBefore = new Vector3[10];
+	Vector3[] pos_inputScreenBefore = new Vector3[10];
 	Vector3[] pos_init = new Vector3[10];
 	Vector3 num_size;
 
 	public Transform pos_rotatePoint;
-
-	Vector2 pos_screenBefore;
-	Vector2 pos_screenNew;
 
 	bool[] flg_start = new bool[10];
 	bool[] flg_move = new bool[10];
@@ -38,71 +36,73 @@ public class K_Swipe : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void Update () {
-		pos_screenBefore = pos_screenNew;
-		pos_screenNew = Camera.main.transform.position;
 
 		int baf_i = 0;
 		foreach (Touch t in Input.touches) {
+
 			baf_i++;
 			//タッチ位置を取得
 			//１フレーム前のタッチ座標を格納
 			pos_inputBefore[baf_i] = pos_input[baf_i];
-			pos_inputScreen = t.position;
+			pos_inputScreenBefore [baf_i] = pos_inputScreen [baf_i];
+			pos_inputScreen[baf_i] = t.position;
 			pos_input[baf_i] = Camera.main.ScreenToWorldPoint (t.position);
-				switch(t.phase){
-				case TouchPhase.Began:
-					if (!CheckHitPoint (pos_input[baf_i]))
-						continue;
-					Started ();
-					pos_init[baf_i] = pos_input[baf_i];
-					flg_start[baf_i] = true;
-					//Debug.Log ("START");
-					break;
-				
-				case TouchPhase.Moved:
-					if (!flg_start [baf_i])
-						continue;
-					//Debug.Log ("FINGER MOVEING");
-					Moving (t.deltaPosition);
-					CheckRotate (t,baf_i);
-					flg_move [baf_i] = true;
-					break;
-				
-				case TouchPhase.Ended:
-					if (!flg_start [baf_i])
-						continue;
 
-					if (!CheckMove (baf_i)) {
-						SwipeE ();
-						//Debug.Log ("SWIPE END");
-					} else {
-						TouchE ();
-						//Debug.Log ("TOUCH END");
-					}
-					flg_start [baf_i] = false;
-					flg_move [baf_i] = false;
-					num_rotateDirection [baf_i] = 0;
 
-					pos_input [baf_i] = Vector3.zero;
-					pos_inputBefore [baf_i] = Vector3.zero;
-					break;
+			switch(t.phase){
+			case TouchPhase.Began:
+				if (!CheckHitPoint (pos_input[baf_i]))
+					continue;
+				Started ();
+				pos_init[baf_i] = pos_input[baf_i];
+				flg_start[baf_i] = true;
+				//Debug.Log ("START");
+				break;
+			
+			case TouchPhase.Moved:
+				if (!flg_start [baf_i])
+					continue;
+				//Debug.Log ("FINGER MOVEING");
+				Moving (t.deltaPosition);
+				CheckRotate (t,baf_i);
+				flg_move [baf_i] = true;
+				break;
+			
+			case TouchPhase.Ended:
+				if (!flg_start [baf_i])
+					continue;
+
+				if (!CheckMove (baf_i)) {
+					SwipeE ();
+					//Debug.Log ("SWIPE END");
+				} else {
+					TouchE ();
+					//Debug.Log ("TOUCH END");
 				}
+				flg_start [baf_i] = false;
+				flg_move [baf_i] = false;
+				num_rotateDirection [baf_i] = 0;
 
-				if (flg_move[baf_i] && flg_start[baf_i]) {
-					if(num_rotateDirection[baf_i] == 1){
-						RightR (1);
-					}else if(num_rotateDirection[baf_i] == -1){
-						LeftR (-1);
-					}
-					break;
+				pos_input [baf_i] = Vector3.zero;
+				pos_inputBefore [baf_i] = Vector3.zero;
+				break;
+			}
+
+			if (flg_move[baf_i] && flg_start[baf_i]) {
+				if(num_rotateDirection[baf_i] == 1){
+					RightR (1);
+				}else if(num_rotateDirection[baf_i] == -1){
+					LeftR (-1);
 				}
+				break;
+			}
 		}
 	}
 
 	bool CheckHitPoint(Vector3 pos){
 		//タッチ箇所がオブジェクトと重なっているかチェック
-		if (pos.x <= transform.position.x + num_size.x / 2 && pos.x >= transform.position.x - num_size.x / 2 &&
-			pos.y <= transform.position.y + num_size.y / 2 && pos.y >= transform.position.y - num_size.y / 2) {
+		if (pos.x <= pos_rotatePoint.position.x + num_size.x / 2 && pos.x >= pos_rotatePoint.position.x - num_size.x / 2 &&
+			pos.y <= pos_rotatePoint.position.y + num_size.y / 2 && pos.y >= pos_rotatePoint.position.y - num_size.y / 2) {
 			return true;
 		}
 		return false;
@@ -118,18 +118,17 @@ public class K_Swipe : MonoBehaviour {
 	}
 
 	void CheckRotate(Touch t,int i){
-		Vector2 baf_pos = Camera.main.WorldToScreenPoint(pos_rotatePoint.position);
-		float baf_rotBef = Vector2.Angle(baf_pos,Camera.main.WorldToScreenPoint (pos_inputBefore [i]));
-		float baf_rotNew = Vector2.Angle(baf_pos,Camera.main.WorldToScreenPoint (pos_input [i]));
+		Vector2 baf_pos = pos_rotatePoint.position;
+		float baf_rotBef = Vector2.Angle(pos_rotatePoint.position,pos_inputBefore[i] - pos_rotatePoint.position);
+		float baf_rotNew = Vector2.Angle(pos_rotatePoint.position,pos_input[i] - pos_rotatePoint.position);
 
-		if (gameObject.name == "レバー") {
-			//Debug.Log (baf_rotNew - baf_rotBef);
-		}
+		Debug.DrawRay (pos_rotatePoint.position,pos_input[i] - pos_rotatePoint.position);
+		Debug.Log (baf_rotNew - baf_rotBef);
 
-		if(baf_rotNew - baf_rotBef > 3){
+		if(baf_rotNew - baf_rotBef > 5 && ((baf_rotBef > 0 && baf_rotNew > 0) || (baf_rotBef < 0 && baf_rotNew < 0))){
 			num_rotateDirection[i] = 1;
 		}
-		else if(baf_rotNew - baf_rotBef < -3){
+		else if(baf_rotNew - baf_rotBef < -5 && ((baf_rotBef > 0 && baf_rotNew > 0) || (baf_rotBef < 0 && baf_rotNew < 0))){
 			num_rotateDirection[i] = -1;
 		}
 	}
@@ -140,5 +139,7 @@ public class K_Swipe : MonoBehaviour {
 	public virtual void SwipeE(){}
 	public virtual void RightR(float dist){}
 	public virtual void LeftR(float dist){}
+
+
 
 }
